@@ -12,7 +12,7 @@
 |
 */
 // setup base_url automatically
-$config['base_url']	= 'http'.(isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON' ? 's' : '').'://'.$_SERVER['HTTP_HOST'].'/';
+$config['base_url']	= 'http'.(isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON' ? 's' : '').'://'.@$_SERVER['HTTP_HOST'].'/';
 
 /*
 |--------------------------------------------------------------------------

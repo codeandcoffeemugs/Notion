@@ -24,7 +24,7 @@
  */
 class Stash {
   
-  private $stash = array();
+  private static $stash = array();
   
   static function add($ns, $name, $value) {
     if (!self::has($ns, $name)) {
