@@ -1,4 +1,4 @@
 Idea = CodeIgniter + stuff to make ideas easier to prototype
 ============================================================
 
-I built this with [John Mangino](http://twitter.com/codeandcoffee). More to follow.
+I built this with [John Mangino](http://twitter.com/johnmangino). More to follow.
