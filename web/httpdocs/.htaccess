@@ -188,9 +188,15 @@ FileETag None
 #   no-www.org/faq.php?q=class_b
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
   RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+  
+  # codeigniter rewrites to index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php?/$1 [L]
 </IfModule>
 
 # without -MultiViews, Apache will give a 404 for a rewrite if a folder of the same name does not exist 
