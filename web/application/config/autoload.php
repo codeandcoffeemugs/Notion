@@ -39,7 +39,7 @@
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-$autoload['libraries'] = array();
+$autoload['libraries'] = array('database', 'session');
 
 
 /*
@@ -52,7 +52,7 @@ $autoload['libraries'] = array();
 */
 
 // url is ALWAYS needed
-$autoload['helper'] = array('url');
+$autoload['helper'] = array('url', 'stash', 'options');
 
 
 /*

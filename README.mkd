@@ -6,7 +6,7 @@ It's a prototyping platform for PHP developers.
 
 ## Some important conventions, to get you started
 
-### Controllers in Idea are *Controller*
+### Controllers in Idea are suffixed *Controller*
 
 By default, CodeIgniter routes a request like `home/index` to some controller named `Home`, the source for which is expected
 to be found in `application/controllers/home.php`. In Idea, `home/index` routes to `HomeController`, expected to be found
