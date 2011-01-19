@@ -1,8 +1,7 @@
 <?php
+class HomeController extends Controller {
 
-class Home extends Controller {
-
-	function Home() {
+	function HomeController() {
 		parent::Controller();	
 	}
 	

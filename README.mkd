@@ -1,12 +1,37 @@
-Idea = CodeIgniter + stuff to make ideas easier to prototype
-============================================================
+# Idea = CodeIgniter + stuff to make ideas easier to prototype
 
 I built this with [John Mangino](http://twitter.com/johnmangino). More to follow.
 
 It's a prototyping platform for PHP developers.
 
-Stuff that lives in Idea
-------------------------
+## Some important conventions, to get you started
+
+### Controllers in Idea are named suffixed `Controller`
+
+By default, CodeIgniter routes a request like `home/index` to some controller named `Home`, the source for which is expected
+to be found in `application/controllers/home.php`. In Idea, `home/index` routes to `HomeController`, expected to be found
+in `application/controllers/homecontroller.php`. 
+
+The reason for the change? Often controllers and models share the same name. They can share a similar name, but a Controller will
+always have the extra suffix.
+
+### The database is pre-configured
+
+In `web/application/config/database.php` you'll find the default database configured for `local@localhost/idea` with password *password*.
+This works great on my local system, but you'll probably want to set it up yourself. If you're creating a new database, I highly
+recommend [Random Key Generator](http://randomkeygen.com/) for generating a strong password.
+
+### Logging is enabled by default
+
+In two places:
+
+1. At the top of web/application/config/config.php, set by the `error_reporting()` function.
+2. By setting `$config['log_threshold']` to `2`
+
+All you need to start seeing log output is to set the write permissions on `web/system/logs` to 777.
+
+## Stuff that lives in Idea
 
 * [CodeIgniter](http://www.codeigniter.com) 1.7.3 - the best Web framework I've ever used: nothing gets out of your way like CodeIgniter
 * [HTML5 Boilerplate](http://html5boilerplate.com/) - if you're gonna do HTML5, get a head start, thanks to [Paul Irish](http://paulirish.com/)
+

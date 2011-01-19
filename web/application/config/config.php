@@ -12,7 +12,7 @@
 |
 */
 // setup base_url automatically
-$config['base_url']	= 'http'.(strtoupper(@$_SERVER['HTTPS']) == 'ON' ? 's' : '').'://'.$_SERVER['HTTP_HOST'].'/';
+$config['base_url']	= 'http'.(isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON' ? 's' : '').'://'.$_SERVER['HTTP_HOST'].'/';
 
 /*
 |--------------------------------------------------------------------------
@@ -174,7 +174,7 @@ $config['directory_trigger'] 	= 'd'; // experimental not currently in use
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 2;
 
 /*
 |--------------------------------------------------------------------------
