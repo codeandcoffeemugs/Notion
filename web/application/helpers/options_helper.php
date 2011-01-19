@@ -32,14 +32,13 @@
  */
 function get_option($name, $default = null, $db_group = 'default') {
   if (Stash::has('options', $name)) {
-    return Stash::get('options', $name);
+    return Stash::get('options', $name, $default, true);
     
   } else {
     $db = DB($db_group);
     $query = $db->get_where('options', array('option_name' => $name));
     
     if (!$query->num_rows()) {
-      Stash::update('options', $name, $default);
       return $default;
     } else {
       $option = $query->result('object');
@@ -93,18 +92,18 @@ function add_option($name, $value, $autoload = true, $db_group = 'default') {
  */
 function update_option($name, $value, $autoload = true, $db_group = 'default') {
   $db = DB($db_group);
-  $query = $db->get_where('options', array('option_name' => $option_name));
+  $query = $db->get_where('options', array('option_name' => $name));
   
   if ($query->num_rows()) {
-    $db->where('option_name', $option_name)->update('options', array(
-      'option_name' => $option_name,
+    $db->where('option_name', $name)->update('options', array(
+      'option_name' => $name,
       'option_value' => maybe_serialize($value),
       'autoload' => $autoload
     ));
     
   } else {
     $db->insert('options', array(
-      'option_name' => $option_name,
+      'option_name' => $name,
       'option_value' => maybe_serialize($value),
       'autoload' => $autoload
     ));

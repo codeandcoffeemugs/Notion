@@ -39,16 +39,24 @@ class Stash {
   }
   
   static function get($ns, $name, $default = null, $single = false) {
-    if (self::has($ns, $name)) {
+    if (!self::has($ns, $name)) {
       return $default;
     } else {
-      $value = $stash[$ns][$name];
+      $value = self::$stash[$ns][$name];
       return $single ? $value[0] : $value;
     }
   }
   
-  static function delete($ns, $name) {
-    unset(self::$stash[$ns][$name]);
+  static function delete($ns, $name = null) {
+    if ($name) {
+      if (isset(self::$stash[$ns][$name])) {
+        unset(self::$stash[$ns][$name]);
+      }
+    } else {
+      if (isset(self::$stash[$ns])) {
+        unset(self::$stash[$ns]);
+      }
+    }
   }
   
   static function has($ns, $name) {

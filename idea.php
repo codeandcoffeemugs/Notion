@@ -62,14 +62,10 @@ Options
 
 
 EOF;
-exit;
+exit; 
 
-#
-# Execute a controller/action?
-#
-elseif (!empty($opts['x']) || ( !$opts && count($argv) == 2 )):
+endif;
 
-  $cli_uri = !empty($opts['x']) ? trim($opts['x'], ' :') : $argv[1];
 
 /*
 |---------------------------------------------------------------
@@ -164,17 +160,116 @@ else
 	define('APPPATH', BASEPATH.$application_folder.'/');
 }
 
-/*
-|---------------------------------------------------------------
-| LOAD THE FRONT CONTROLLER
-|---------------------------------------------------------------
-|
-| And away we go...
-|
-*/
-require_once BASEPATH.'codeigniter/CodeIgniter'.EXT;
 
-/* End of file index.php */
-/* Location: ./index.php */
+#
+# Run a test case?
+#
+if (!empty($opts['t']) || isset($opts['T'])):
+
+  define('CI_VERSION',	'1.7.3');
+
+  require(BASEPATH.'codeigniter/Common'.EXT);
+  require(BASEPATH.'codeigniter/Compat'.EXT);
+  require(APPPATH.'config/constants'.EXT);
+  
+  //set_error_handler('_exception_handler');
+  
+  if ( ! is_php('5.3'))
+  {
+  	@set_magic_quotes_runtime(0); // Kill magic quotes
+  }
+
+  $BM =& load_class('Benchmark');
+  
+  $EXT =& load_class('Hooks');
+
+  $EXT->_call_hook('pre_system');
+
+  $CFG =& load_class('Config');
+  $URI =& load_class('URI');
+  //$RTR =& load_class('Router');
+  $OUT =& load_class('Output');
+
+  if ($EXT->_call_hook('cache_override') === FALSE)
+  {
+  	if ($OUT->_display_cache($CFG, $URI) == TRUE)
+  	{
+  		exit;
+  	}
+  }
+
+  $IN		=& load_class('Input');
+  $LANG	=& load_class('Language');
+
+  if ( ! is_php('5.0.0'))
+  {
+  	load_class('Loader', FALSE);
+  	require(BASEPATH.'codeigniter/Base4'.EXT);
+  }
+  else
+  {
+  	require(BASEPATH.'codeigniter/Base5'.EXT);
+  }
+
+  // Load the base controller class
+  load_class('Controller', FALSE);
+  
+  $CI = new Controller();
+  
+  require_once(APPPATH.'/simpletest/autorun.php');
+  
+  class AllTests extends TestSuite {
+    function AllTests() {
+      global $opts;
+      
+      // run an individual test:
+      if ($test = trim(@$opts['t'], ' :')) {
+        if (file_exists(($file = APPPATH.'/tests/'.$test.'.php'))) {
+          $this->addFile($file);
+        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'_test.php'))) {
+          $this->addFile($file);
+        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'_tests.php'))) {
+          $this->addFile($file);
+        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'Test.php'))) {
+          $this->addFile($file);
+        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'Tests.php'))) {
+          $this->addFile($file);
+        } else {
+          echo "Test case file for '$test' does not exist.\n";
+          exit(1);
+        }
+        
+      // run all tests:
+      } else {
+        $dir = opendir(APPPATH.'/tests/');
+        while(($file = readdir($dir)) !== false) {
+          if (substr(strrev($file), 0, 3) == 'php') {
+            $this->addFile(sprintf('%s/%s', APPPATH.'/tests/', $file));
+          }
+        }
+      }
+      
+    }
+  }
+  
+  exit(0);
+  
+  
+#
+# Execute a controller/action?
+#
+elseif (!empty($opts['x']) || ( !$opts && count($argv) == 2 )):
+
+  $cli_uri = !empty($opts['x']) ? trim($opts['x'], ' :') : $argv[1];
+
+  /*
+  |---------------------------------------------------------------
+  | LOAD THE FRONT CONTROLLER
+  |---------------------------------------------------------------
+  |
+  | And away we go...
+  |
+  */
+  require_once BASEPATH.'codeigniter/CodeIgniter'.EXT;
 
 endif;
