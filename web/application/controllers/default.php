@@ -1,15 +1,13 @@
 <?php
 
-class Welcome extends Controller {
+class Default extends Controller {
 
-	function Welcome()
-	{
+	function Default() {
 		parent::Controller();	
 	}
 	
-	function index()
-	{
-		$this->load->view('welcome_message');
+	function index() {
+		$this->load->view('default/index');
 	}
 }
 
