@@ -2,3 +2,11 @@ Idea = CodeIgniter + stuff to make ideas easier to prototype
 ============================================================
 
 I built this with [John Mangino](http://twitter.com/johnmangino). More to follow.
+
+It's a prototyping platform for PHP developers.
+
+Stuff that lives in Idea
+------------------------
+
+* [CodeIgniter](http://www.codeigniter.com) 1.7.3 - the best Web framework I've ever used: nothing gets out of your way like CodeIgniter
+* [HTML5 Boilerplate](http://http://html5boilerplate.com/) - if you're gonna do HTML5, get a head start, thanks to [Paul Irish](http://paulirish.com/)
