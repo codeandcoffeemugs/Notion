@@ -6,7 +6,7 @@ It's a prototyping platform for PHP developers.
 
 ## Some important conventions, to get you started
 
-### Controllers in Idea are named suffixed `Controller`
+### Controllers in Idea are *Controller*
 
 By default, CodeIgniter routes a request like `home/index` to some controller named `Home`, the source for which is expected
 to be found in `application/controllers/home.php`. In Idea, `home/index` routes to `HomeController`, expected to be found
@@ -20,8 +20,8 @@ leaving room for a `Product` model class.
 ### The database is pre-configured
 
 In `web/application/config/database.php` you'll find the default database configured for `local@localhost/idea` with password *password*.
-This works great on my local system, but you'll probably want to set it up yourself. If you're creating a new database, I highly
-recommend [Random Key Generator](http://randomkeygen.com/) for generating a strong password.
+This works great on my local system, but you'll probably want to change these settings to suit your needs. If you're creating a new 
+database, I highly recommend using [Random Key Generator](http://randomkeygen.com/) to generate a strong password.
 
 ### Logging is enabled by default
 
