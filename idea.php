@@ -224,15 +224,15 @@ if (!empty($opts['t']) || isset($opts['T'])):
       
       // run an individual test:
       if ($test = trim(@$opts['t'], ' :')) {
-        if (file_exists(($file = APPPATH.'/tests/'.$test.'.php'))) {
+        if (file_exists(($file = APPPATH.'tests/'.$test.'.php'))) {
           $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'_test.php'))) {
+        } else if (file_exists(($file = APPPATH.'tests/'.$test.'_test.php'))) {
           $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'_tests.php'))) {
+        } else if (file_exists(($file = APPPATH.'tests/'.$test.'_tests.php'))) {
           $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'Test.php'))) {
+        } else if (file_exists(($file = APPPATH.'tests/'.$test.'Test.php'))) {
           $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'Tests.php'))) {
+        } else if (file_exists(($file = APPPATH.'tests/'.$test.'Tests.php'))) {
           $this->addFile($file);
         } else {
           echo "Test case file for '$test' does not exist.\n";
@@ -244,7 +244,7 @@ if (!empty($opts['t']) || isset($opts['T'])):
         $dir = opendir(APPPATH.'/tests/');
         while(($file = readdir($dir)) !== false) {
           if (substr(strrev($file), 0, 3) == 'php') {
-            $this->addFile(sprintf('%s/%s', APPPATH.'/tests/', $file));
+            $this->addFile(sprintf('%s/%s', APPPATH.'tests', $file));
           }
         }
       }
