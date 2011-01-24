@@ -10,7 +10,11 @@
 |
 */
 
-
+$hook['pre_controller'] = array(
+  'function' => 'do_options_autoload',
+  'filename' => 'options_autoloader.php',
+  'filepath' => 'hooks'
+);
 
 /* End of file hooks.php */
 /* Location: ./system/application/config/hooks.php */

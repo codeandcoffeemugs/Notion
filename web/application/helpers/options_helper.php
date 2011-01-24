@@ -36,8 +36,8 @@ function get_option($name, $default = null, $db_group = 'default') {
     log_message('info', sprintf('Loading option [%s], with default [%s]', $name, maybe_serialize($default)));
   }
   
-  if (Stash::has('options', $name)) {
-    return Stash::get('options', $name, $default, true);
+  if (Stash::has('__options__', $name)) {
+    return Stash::get('__options__', $name, $default, true);
     
   } else {
     $db = option_db($db_group);
@@ -49,7 +49,7 @@ function get_option($name, $default = null, $db_group = 'default') {
     } else {
       $option = $query->row('object');
       $value = maybe_unserialize($option->option_value);
-      Stash::update('options', $name, $value);
+      Stash::update('__options__', $name, $value);
       return $value;
     }
   }
@@ -64,7 +64,7 @@ function get_option($name, $default = null, $db_group = 'default') {
  * @return true when the option did not exist and was written; otherwise, false
  */
 function add_option($name, $value, $autoload = true, $db_group = 'default') {
-  if (Stash::has('options', $name)) {
+  if (Stash::has('__options__', $name)) {
     return false;
     
   } else {
@@ -88,7 +88,7 @@ function add_option($name, $value, $autoload = true, $db_group = 'default') {
         'autoload' => $autoload
       ));
       
-      Stash::update('options', $name, $value);
+      Stash::update('__options__', $name, $value);
       
       return true;
     }  
@@ -143,7 +143,7 @@ function update_option($name, $value, $autoload = true, $db_group = 'default') {
   }
   
   if ($result) {
-    Stash::update('options', $name, $value);
+    Stash::update('__options__', $name, $value);
   }
   
   return $result;
@@ -156,7 +156,7 @@ function update_option($name, $value, $autoload = true, $db_group = 'default') {
  * @return true when there was something to delete; false when not, or on failure
  */
 function delete_option($name, $db_group = 'default') {
-  Stash::delete('options', $name);
+  Stash::delete('__options__', $name);
   $db = option_db($db_group);
   $db->delete('options', array('option_name' => $name));
 
@@ -191,6 +191,15 @@ function option_db($db_group = 'default') {
  */ 
 function delete_all_options($db_group = 'default') {
   $db = DB($db_group);
-  Stash::delete('options');
+  Stash::delete('__options__');
   $db->empty_table('options');
+}
+
+function options_autoload($db_group = 'default') {
+  $db = DB($db_group);
+  $all = $db->get_where('options', array('autoload' => true));
+  foreach($all->result() as $opt) {
+    $value = maybe_unserialize($opt->option_value);
+    Stash::update('__options__', $opt->option_name, $value);
+  }
 }

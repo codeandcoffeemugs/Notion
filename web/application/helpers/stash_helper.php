@@ -38,12 +38,42 @@ class Stash {
     self::$stash[$ns][$name] = array($value);
   }
   
-  static function get($ns, $name, $default = null, $single = false) {
+  static function get($ns, $name, $default = array(), $single = false) {
     if (!self::has($ns, $name)) {
       return $default;
     } else {
       $value = self::$stash[$ns][$name];
       return $single ? $value[0] : $value;
+    }
+  }
+  
+  static function pop($ns, $name, $default = null) {
+    if (self::has($ns, $name)) {
+      $stash = self::get($ns, $name);
+      if ($stash) {
+        $value = array_pop($stash);
+        self::$stash[$ns][$name] = $stash;
+        return $value;
+      } else {
+        return $default;
+      }
+    } else {
+      return $default;
+    }
+  }
+  
+  static function shift($ns, $name, $default = null) {
+    if (self::has($ns, $name)) {
+      $stash = self::get($ns, $name);
+      if ($stash) {
+        $value = array_shift($stash);
+        self::$stash[$ns][$name] = $stash;
+        return $value;
+      } else {
+        return $default;
+      }
+    } else {
+      return $default;
     }
   }
   

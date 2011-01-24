@@ -140,7 +140,7 @@ function cache_option($action, $cache_key, $value = null, $timeout = 0, $db_grou
   );
   
   if ($action == 'set') {
-    return update_option($key, $packet);
+    return update_option($key, $packet, false, $db_group);
     
   } else if ($action == 'add') {
     if (cache_option_packet_expired(get_option($key, null, $db_group))) {
@@ -164,7 +164,7 @@ function cache_option($action, $cache_key, $value = null, $timeout = 0, $db_grou
     }
     
   } else if ($action == 'delete') {
-    return delete_option($key);
+    return delete_option($key, $db_group);
     
   } else if ($action == 'increment') {
     // lock the options table

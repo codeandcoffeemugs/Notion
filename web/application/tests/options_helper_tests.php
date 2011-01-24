@@ -10,6 +10,15 @@ class OptionsHelperTests extends UnitTestCase {
     delete_all_options();
   }
   
+  function testAutoloader() {
+    $this->assertTrue(update_option('autoloadable', 'foo'));
+    $this->assertTrue(update_option('not-autoloadable', 'bar', false));
+    Stash::delete('__options__');
+    options_autoload();
+    $this->assertEqual('foo', Stash::get('__options__', 'autoloadable', null, true));
+    $this->assertNull(Stash::get('__options__', 'not-autoloadable', null, true));
+  }
+  
   function testAddOptionThatDoesntExist() {
     $this->assertNull(get_option('foo', null));
     $this->assertTrue(add_option('foo', true));
