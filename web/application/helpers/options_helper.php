@@ -30,7 +30,7 @@
  * @param mixed $default (optional) A default value to return when $name option does not exist
  * @param string $db_group (optional) The database group to load; defaults to 'default'
  */
-function get_option($name, $default = null, $db_group = 'default') {
+function get_option($name, $default = null, $db_group = OPTIONS_DEFAULT_DBGROUP) {
   global $CFG;
   if ($CFG->item('log_threshold') >= 3 ) {
     log_message('info', sprintf('Loading option [%s], with default [%s]', $name, maybe_serialize($default)));
@@ -63,7 +63,7 @@ function get_option($name, $default = null, $db_group = 'default') {
  * @param string $db_group (optional) The database group to load; defaults to 'default'
  * @return true when the option did not exist and was written; otherwise, false
  */
-function add_option($name, $value, $autoload = true, $db_group = 'default') {
+function add_option($name, $value, $autoload = true, $db_group = OPTIONS_DEFAULT_DBGROUP) {
   if (Stash::has('__options__', $name)) {
     return false;
     
@@ -101,7 +101,7 @@ function add_option($name, $value, $autoload = true, $db_group = 'default') {
  * @param string $db_group (optional) The database group to load; defaults to 'default'
  * @return true when exists; false on failure
  */
-function has_option($name, $db_group = 'default') {
+function has_option($name, $db_group = OPTIONS_DEFAULT_DBGROUP) {
   $db = option_db($db_group);
   $query = $db->get_where('options', array('option_name' => $name));
   $exists = $query->num_rows() > 0 ? true : false;
@@ -119,7 +119,7 @@ function has_option($name, $db_group = 'default') {
  * @param string $db_group (optional) The database group to load; defaults to 'default'
  * @return true on success; false on failure
  */
-function update_option($name, $value, $autoload = true, $db_group = 'default') {
+function update_option($name, $value, $autoload = true, $db_group = OPTIONS_DEFAULT_DBGROUP) {
   $serialized = maybe_serialize($value);
   
   log_message('info', sprintf('Updating%s option [%s] with value [%s]', $autoload ? ' autoloading' : '', $name, $serialized));
@@ -155,7 +155,7 @@ function update_option($name, $value, $autoload = true, $db_group = 'default') {
  * @param string $db_group (optional) The database group to load; defaults to 'default'
  * @return true when there was something to delete; false when not, or on failure
  */
-function delete_option($name, $db_group = 'default') {
+function delete_option($name, $db_group = OPTIONS_DEFAULT_DBGROUP) {
   Stash::delete('__options__', $name);
   $db = option_db($db_group);
   $db->delete('options', array('option_name' => $name));
@@ -170,7 +170,7 @@ function delete_option($name, $db_group = 'default') {
 /**
  * Don't create multiple instances of the DB driver classes.
  */
-function option_db($db_group = 'default') {
+function option_db($db_group = OPTIONS_DEFAULT_DBGROUP) {
   static $instances;
   
   if (!$instances) {
@@ -189,13 +189,13 @@ function option_db($db_group = 'default') {
  * Remove all options from the system.
  * @param string $db_group (optional) defaults to 'default'
  */ 
-function delete_all_options($db_group = 'default') {
+function delete_all_options($db_group = OPTIONS_DEFAULT_DBGROUP) {
   $db = DB($db_group);
   Stash::delete('__options__');
   $db->empty_table('options');
 }
 
-function options_autoload($db_group = 'default') {
+function options_autoload($db_group = OPTIONS_DEFAULT_DBGROUP) {
   $db = DB($db_group);
   $all = $db->get_where('options', array('autoload' => true));
   foreach($all->result() as $opt) {

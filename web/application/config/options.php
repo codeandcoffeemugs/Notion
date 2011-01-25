@@ -12,3 +12,6 @@
 | -------------------------------------------------------------------
 */
 define('OPTIONS_ENABLE_AUTOLOADING', true);
+define('OPTIONS_DEFAULT_DBGROUP', 'default');
+
+$config['options'] = array();

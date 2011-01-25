@@ -80,7 +80,7 @@ $autoload['plugin'] = array();
 |
 */
 
-$autoload['config'] = array('cache');
+$autoload['config'] = array('options', 'cache');
 
 
 /*
