@@ -14,6 +14,9 @@
 | DEFAULT CACHING STRATEGY?
 | -------------------------------------------------------------------
 */
+#
+# What is the default caching strategy - "options" or "memcached"
+#
 define('CACHE_STRATEGY_DEFAULT', 'options');
 
 /*
@@ -21,6 +24,22 @@ define('CACHE_STRATEGY_DEFAULT', 'options');
 | OPTIONS CACHING STRATEGIES
 | -------------------------------------------------------------------
 */
-// options cache settings are grouped by DB group (the third element in the array)
-// how should we prefix each value?
-$config['cache']['options']['default']['prefix'] = 'cache-';
+
+#
+# "default" DB group
+#
+$config['cache']['options']['default']['prefix'] = 'cache-'; // how should each cache entry be prefixed?
+
+#
+# the memcached servers
+#
+$config['cache']['memcached'][] = array(
+  'host' => 'localhost',
+  'port' => 11211,
+  'persistent' => true,
+  'weight' => 1,
+  'timeout' => 1, 
+  'retry_interval' => 15,
+  'status' => true,
+  'failure_callback' => null
+);

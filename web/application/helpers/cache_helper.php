@@ -35,7 +35,7 @@ function cache($cache_key, $value, $timeout = 0, $strategy = CACHE_STRATEGY_DEFA
 function cache_get($cache_key, $default = null, $strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
   if ($strategy == 'options') {
     return cache_option('get', $cache_key, $default, 0, $options);
-  } else if ($st[0] == 'memcache') {
+  } else if ($strategy == 'memcached') {
     return cache_memcache('get', $cache_key, $default, 0, $options);
   } else {
     throw new Exception(sprintf('Unrecognized caching strategy: %s', $strategy));
@@ -45,7 +45,7 @@ function cache_get($cache_key, $default = null, $strategy = CACHE_STRATEGY_DEFAU
 function cache_set($cache_key, $value, $timeout = 0, $strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
   if ($strategy == 'options') {
     return cache_option('set', $cache_key, $value, $timeout, $options);
-  } else if ($strategy == 'memcache') {
+  } else if ($strategy == 'memcached') {
     return cache_memcache('set', $cache_key, $value, $timeout, $options);
   } else {
     throw new Exception(sprintf('Unrecognized caching strategy: %s', $strategy));
@@ -55,7 +55,7 @@ function cache_set($cache_key, $value, $timeout = 0, $strategy = CACHE_STRATEGY_
 function cache_increment($cache_key, $value = 1, $strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
   if ($strategy == 'options') {
     return cache_option('increment', $cache_key, $value, 0, $options);
-  } else if ($strategy == 'memcache') {
+  } else if ($strategy == 'memcached') {
     return cache_memcache('increment', $cache_key, $value, 0, $options);
   } else {
     throw new Exception(sprintf('Unrecognized caching strategy: %s', $strategy));
@@ -65,7 +65,7 @@ function cache_increment($cache_key, $value = 1, $strategy = CACHE_STRATEGY_DEFA
 function cache_decrement($cache_key, $value = 1, $strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
   if ($strategy == 'options') {
     return cache_option('decrement', $cache_key, $value, 0, $options);
-  } else if ($strategy == 'memcache') {
+  } else if ($strategy == 'memcached') {
     return cache_memcache('decrement', $cache_key, $value, 0, $options);
   } else {
     throw new Exception(sprintf('Unrecognized caching strategy: %s', $strategy));
@@ -75,7 +75,7 @@ function cache_decrement($cache_key, $value = 1, $strategy = CACHE_STRATEGY_DEFA
 function cache_add($cache_key, $value, $timeout = 0, $strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
   if ($strategy == 'options') {
     return cache_option('add', $cache_key, $value, $timeout, $options);
-  } else if ($strategy == 'memcache') {
+  } else if ($strategy == 'memcached') {
     return cache_memcache('add', $cache_key, $value, $timeout, $options);
   } else {
     throw new Exception(sprintf('Unrecognized caching strategy: %s', $strategy));
@@ -85,7 +85,7 @@ function cache_add($cache_key, $value, $timeout = 0, $strategy = CACHE_STRATEGY_
 function cache_replace($cache_key, $value, $timeout = 0, $strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
   if ($strategy == 'options') {
     return cache_option('replace', $cache_key, $value, $timeout, $options);
-  } else if ($strategy == 'memcache') {
+  } else if ($strategy == 'memcached') {
     return cache_memcache('replace', $cache_key, $value, $timeout, $options);
   } else {
     throw new Exception(sprintf('Unrecognized caching strategy: %s', $strategy));
@@ -95,7 +95,7 @@ function cache_replace($cache_key, $value, $timeout = 0, $strategy = CACHE_STRAT
 function cache_delete($cache_key, $strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
   if ($strategy == 'options') {
     return cache_option('delete', $cache_key, null, null, $options);
-  } else if ($strategy == 'memcache') {
+  } else if ($strategy == 'memcached') {
     return cache_memcache('delete', $cache_key, null, null, $options);
   } else {
     throw new Exception(sprintf('Unrecognized caching strategy: %s', $strategy));
@@ -187,17 +187,7 @@ function cache_option($action, $cache_key, $value = null, $timeout = 0, $db_grou
         return false;
       }
     } else {
-      if ($value < 0) {
-        $value = 0;
-      }
-      
-      if (cache_option('set', $cache_key, $value)) {
-        $db->query('UNLOCK TABLES');
-        return $value;
-      } else {
-        $db->query('UNLOCK TABLES');
-        return false;
-      }
+      return false;
     } 
   
   } else if ($action == 'decrement') {
@@ -226,19 +216,72 @@ function cache_option($action, $cache_key, $value = null, $timeout = 0, $db_grou
         return false;
       }
     } else {
-      if ($value < 0) {
-        $value = 0;
-      }
-      
-      if (cache_option('set', $cache_key, $value)) {
-        $db->query('UNLOCK TABLES');
-        return $value;
-      } else {
-        $db->query('UNLOCK TABLES');
-        return false;
-      }
+      return false;
     } 
   }
+}
+
+function cache_memcache($action, $cache_key, $value = null, $timeout = 0, $flags = null) {
+  global $CFG;
+
+  if ($CFG->item('log_threshold') >= 3) {
+    log_message('info', sprintf("cache_memcache::%s(cache_key:%s, value:%s, timeout:%s, flags:%s)", $action, $cache_key, maybe_serialize($value), $timeout, $flags));
+  }
+  
+  $timeout_date = cache_parse_timeout($timeout);
+  $expires = $timeout_date != 0 ? $timeout_date - time() : 0;
+  $memcache = cache_get_memcache();
+  
+  if ($action == 'set') {
+    return $memcache->set($cache_key, $value, $flags, $expires);
+    
+  } else if ($action == 'add') {
+    return $memcache->add($cache_key, $value, $flags, $expires);
+    
+  } else if ($action == 'replace') {
+    return $memcache->replace($cache_key, $value, $flags, $expires);
+    
+  } else if ($action == 'get') {
+    $stored = $memcache->get($cache_key, $flags);
+    return ($stored === false) ? $value : $stored;  
+      
+  } else if ($action == 'delete') {
+    return $memcache->delete($cache_key);
+    
+  } else if ($action == 'increment') {
+    return $memcache->increment($cache_key, $value);
+  
+  } else if ($action == 'decrement') {
+    return $memcache->decrement($cache_key, $value);
+    
+  }
+}
+
+function cache_get_memcache() {
+  static $memcache;
+  
+  if (is_null($memcache)) {
+    $cfg = cache_get_config('memcached');
+
+    log_message('info', 'Initializing memcached connection object');
+    $memcache = new Memcache();
+  
+    foreach($cfg as $s) {
+      log_message('info', sprintf('Connecting to memcached server: %s:%s(%s)', @$s['host'], @$s['port'], @$s['weight']));
+      $memcache->addServer(
+        @$s['host'],
+        @$s['port'],
+        @$s['persistent'],
+        @$s['weight'],
+        @$s['timeout'],
+        @$s['retry_interval'],
+        @$s['status'],
+        @$s['failure_callback']
+      );
+    }
+  }
+  
+  return $memcache;
 }
 
 /**
@@ -266,9 +309,6 @@ function cache_option_packet_expired($packet = null) {
   return $expired;
 }
 
-function cache_memcache($action, $cache_key, $value = null, $timeout, $options) {
-  
-}
 
 function cache_parse_timeout($timeout = 0) {
   $now = time();
@@ -291,20 +331,59 @@ function cache_parse_timeout($timeout = 0) {
   return $expires;
 }
 
-function cache_get_config($strategy = 'options', $id = 'default') {
+/**
+ * Loads the configuration settings for the given strategy.
+ * Also fills in with sensible defaults when configuration data is missing.
+ * @param string $strategy 'options' or 'memcached'
+ * @param string $db_group (optional) when $strategy is 'options', $db_group specifies the configuration group to use
+ */
+function cache_get_config($strategy = 'options', $db_group = 'default') {
   global $CFG;
   
   $config = array_merge(array(
-    'options' => array()
+    $strategy => array()
   ), $CFG->item('cache'));
   
-  $cfg = array_merge(array(
-    $id => array(
-      'prefix' => 'cache-'
-    )
-  ), $config['options']);
-  
-  return $cfg[$id];
+  if ($strategy == 'options') {
+    
+    $cfg = array_merge(array(
+      $db_group => array(
+        'prefix' => 'cache-'
+      )
+    ), $config['options']);
+    
+    return $cfg[$db_group];
+    
+  } else if ($strategy == 'memcached') {
+    
+    $cfg = @$config['memcached'] && is_array($config['memcached']) ? $config['memcached'] : array(array(
+      'host' => 'localhost',
+      'port' => 11211,
+      'persistent' => true,
+      'weight' => 1,
+      'timeout' => 1,
+      'retry_interval' => 15,
+      'status' => true,
+      'failure_callback' => null
+    ));
+    
+    foreach($cfg as $s => $server) {
+      $cfg[$s] = array_merge(array(
+        'host' => 'localhost',
+        'port' => 11211,
+        'persistent' => true,
+        'weight' => 1,
+        'timeout' => 1,
+        'retry_interval' => 15,
+        'status' => true,
+        'failure_callback' => null
+      ), $server);
+    }
+    
+    return $cfg;
+    
+  }
+
 }
 
 function cache_flush($strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
@@ -318,7 +397,9 @@ function cache_flush($strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
     $db->like('option_name', $cfg['prefix'], 'after')->delete('options');
     // TODO: this is a little too thorough: dial back to just cached options?
     Stash::delete('options');
-  } else if ($strategy == 'memcache') {
+  } else if ($strategy == 'memcached') {
+    $memcache = cache_get_memcache();
+    $memcache->flush();
     
   } else {
     throw new Exception(sprintf('Unrecognized caching strategy: %s', $strategy));

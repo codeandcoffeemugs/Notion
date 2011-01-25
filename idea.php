@@ -37,7 +37,8 @@ $opts = getopt(
     'd::',
     'x::',
     't::',
-    'T'
+    'T',
+    'i'
   ))
 );
 
@@ -59,6 +60,7 @@ Options
  -t:<test_case>                   Run a unit test case
  -T                               Run all unit tests
  -d:<db_group>                    Load the named database group instead of default
+ -i                               Display the output of phpinfo()
 
 
 EOF;
@@ -160,11 +162,18 @@ else
 	define('APPPATH', BASEPATH.$application_folder.'/');
 }
 
+#
+# Print phpinfo()?
+#
+if (isset($opts['i'])):
+
+  phpinfo();
+  exit(0);
 
 #
 # Run a test case?
 #
-if (!empty($opts['t']) || isset($opts['T'])):
+elseif (!empty($opts['t']) || isset($opts['T'])):
 
   define('CI_VERSION',	'1.7.3');
 
