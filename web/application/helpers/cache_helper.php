@@ -32,7 +32,7 @@ function cache($cache_key, $value, $timeout = 0, $strategy = CACHE_STRATEGY_DEFA
   return cache_set($cache_key, $value, $timeout, $strategy, $options);
 }
 
-function get_cache($cache_key, $default = null, $strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
+function cache_get($cache_key, $default = null, $strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
   if ($strategy == 'options') {
     return cache_option('get', $cache_key, $default, 0, $options);
   } else if ($st[0] == 'memcache') {
@@ -130,7 +130,7 @@ function cache_option($action, $cache_key, $value = null, $timeout = 0, $db_grou
     log_message('info', sprintf("cache_option::%s(cache_key:%s, value:%s, timeout:%s, db_group:%s)", $action, $cache_key, maybe_serialize($value), $timeout, $db_group));
   }
   
-  $cfg = get_cache_config('options', $db_group);
+  $cfg = cache_get_config('options', $db_group);
   $key = @$cfg['prefix'].$cache_key;
   $expires = cache_parse_timeout($timeout);
   
@@ -291,7 +291,7 @@ function cache_parse_timeout($timeout = 0) {
   return $expires;
 }
 
-function get_cache_config($strategy = 'options', $id = 'default') {
+function cache_get_config($strategy = 'options', $id = 'default') {
   global $CFG;
   
   $config = array_merge(array(
@@ -307,13 +307,13 @@ function get_cache_config($strategy = 'options', $id = 'default') {
   return $cfg[$id];
 }
 
-function flush_cache($strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
+function cache_flush($strategy = CACHE_STRATEGY_DEFAULT, $options = null) {
   if ($strategy == 'options') {
     if (!$options) {
       $options = 'default';
     }
     
-    $cfg = get_cache_config($strategy, $options);
+    $cfg = cache_get_config($strategy, $options);
     $db = option_db($options);
     $db->like('option_name', $cfg['prefix'], 'after')->delete('options');
     // TODO: this is a little too thorough: dial back to just cached options?
