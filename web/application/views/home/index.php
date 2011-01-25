@@ -33,6 +33,9 @@
  
   <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
   <script src="js/libs/modernizr-1.6.min.js"></script>
+  <?php
+  
+  ?>
 
 </head>
 
@@ -40,11 +43,68 @@
 
   <div id="container">
     <header>
-
+        <h1>Slim UI</h1>
+        <?php
+       
+        	$facebook = new Facebook(array(
+            'appId' => $appId,
+            'secret' => $secret,
+            'cookie' => true
+          ));
+            $session = $facebook->getSession();
+            if($session == null) {
+              
+            }
+            $me = null;
+            if($session) {
+                $uid = $facebook->getUser();
+                $me = $facebook->api('/me');
+                $access_token = $facebook->getAccessToken();
+                $exp = $session['expires'];
+            }
+            
+            if($me) {
+              $logoutUrl = $facebook->getLogoutUrl();
+            } else {
+              $loginUrl = $facebook->getLoginUrl(array('req_perms' => 'offline_access,user_status,publish_stream,user_photos'));
+            }
+        ?>
+          <?php if($me) { ?>
+            <pre>
+              <?php print_r($session); ?>
+            </pre>
+            <a href="<?=$logoutUrl ?>"><img src="http://static.ak.fbcdn.net/rsrc.php/z2Y31/hash/cxrz4k7j.gif" />
+              </a>
+          <?php } else { ?>
+            <a href="<?=$loginUrl ?>">
+          <img src="http://static.ak.fbcdn.net/rsrc.php/zB6N8/hash/4li2k73z.gif" />
+          </a>
+          <?php } ?>
+          <?php
+          $albums = $facebook->api('/me/albums');
+          ?>
+          <pre>
+            <?php //var_dump($albums); ?>
+            <?php
+            foreach($albums['data'] as $album) {
+              if($album['name'] == 'Family') {
+                $photos = $facebook->api("/{$album['id']}/photos");
+                //var_dump($photos);
+                foreach($photos['data'] as $photo) {
+                  ?>
+                  <img src="<?php echo $photo['source']; ?>" />
+                  <?php
+                }
+              }
+            }
+            ?>
+          </pre>
+        
+        
     </header>
     
     <div id="main">
-
+     
     </div>
     
     <footer>
@@ -80,15 +140,16 @@
   <!-- asynchronous google analytics: mathiasbynens.be/notes/async-analytics-snippet 
        change the UA-XXXXX-X to be your site's ID -->
   <script>
-   var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
-   (function(d, t) {
-    var g = d.createElement(t),
-        s = d.getElementsByTagName(t)[0];
-    g.async = true;
-    g.src = ('https:' == location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    s.parentNode.insertBefore(g, s);
-   })(document, 'script');
+   // var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
+   //    (function(d, t) {
+   //     var g = d.createElement(t),
+   //         s = d.getElementsByTagName(t)[0];
+   //     g.async = true;
+   //     g.src = ('https:' == location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+   //     s.parentNode.insertBefore(g, s);
+   //    })(document, 'script');
   </script>
   
+ 
 </body>
 </html>

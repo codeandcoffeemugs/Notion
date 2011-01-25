@@ -6,7 +6,19 @@ class HomeController extends Controller {
 	}
 	
 	function index() {
-		$this->load->view('home/index');
+	  $this->config->load('facebook');
+	  $data['appId'] = $this->config->item('appId');
+		$data['secret'] = $this->config->item('secret');
+		$data['apiKey'] = $this->config->item('apiKey');
+		
+		$this->load->helper('facebook');
+		
+		// prepare and create the data for the view
+	
+		
+		//$data['fb'] = new facebook();
+		$this->load->view('home/index',$data);
+		
 	}
 }
 
