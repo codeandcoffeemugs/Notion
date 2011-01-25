@@ -52,7 +52,7 @@ $autoload['libraries'] = array('database', 'session');
 */
 
 // url is ALWAYS needed
-$autoload['helper'] = array('url', 'stash', 'options');
+$autoload['helper'] = array('url', 'stash', 'options', 'cache');
 
 
 /*
@@ -80,7 +80,7 @@ $autoload['plugin'] = array();
 |
 */
 
-$autoload['config'] = array();
+$autoload['config'] = array('options', 'cache');
 
 
 /*

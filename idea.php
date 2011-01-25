@@ -37,7 +37,8 @@ $opts = getopt(
     'd::',
     'x::',
     't::',
-    'T'
+    'T',
+    'i'
   ))
 );
 
@@ -59,6 +60,7 @@ Options
  -t:<test_case>                   Run a unit test case
  -T                               Run all unit tests
  -d:<db_group>                    Load the named database group instead of default
+ -i                               Display the output of phpinfo()
 
 
 EOF;
@@ -160,11 +162,18 @@ else
 	define('APPPATH', BASEPATH.$application_folder.'/');
 }
 
+#
+# Print phpinfo()?
+#
+if (isset($opts['i'])):
+
+  phpinfo();
+  exit(0);
 
 #
 # Run a test case?
 #
-if (!empty($opts['t']) || isset($opts['T'])):
+elseif (!empty($opts['t']) || isset($opts['T'])):
 
   define('CI_VERSION',	'1.7.3');
 
@@ -224,15 +233,15 @@ if (!empty($opts['t']) || isset($opts['T'])):
       
       // run an individual test:
       if ($test = trim(@$opts['t'], ' :')) {
-        if (file_exists(($file = APPPATH.'/tests/'.$test.'.php'))) {
+        if (file_exists(($file = APPPATH.'tests/'.$test.'.php'))) {
           $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'_test.php'))) {
+        } else if (file_exists(($file = APPPATH.'tests/'.$test.'_test.php'))) {
           $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'_tests.php'))) {
+        } else if (file_exists(($file = APPPATH.'tests/'.$test.'_tests.php'))) {
           $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'Test.php'))) {
+        } else if (file_exists(($file = APPPATH.'tests/'.$test.'Test.php'))) {
           $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'/tests/'.$test.'Tests.php'))) {
+        } else if (file_exists(($file = APPPATH.'tests/'.$test.'Tests.php'))) {
           $this->addFile($file);
         } else {
           echo "Test case file for '$test' does not exist.\n";
@@ -244,7 +253,7 @@ if (!empty($opts['t']) || isset($opts['T'])):
         $dir = opendir(APPPATH.'/tests/');
         while(($file = readdir($dir)) !== false) {
           if (substr(strrev($file), 0, 3) == 'php') {
-            $this->addFile(sprintf('%s/%s', APPPATH.'/tests/', $file));
+            $this->addFile(sprintf('%s/%s', APPPATH.'tests', $file));
           }
         }
       }

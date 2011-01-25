@@ -7,7 +7,16 @@ class OptionsHelperTests extends UnitTestCase {
   function setUp() {
     global $CI;
     $CI->load->helpers(array('stash', 'options'));
-    trunc_options();
+    delete_all_options();
+  }
+  
+  function testAutoloader() {
+    $this->assertTrue(update_option('autoloadable', 'foo'));
+    $this->assertTrue(update_option('not-autoloadable', 'bar', false));
+    Stash::delete('__options__');
+    options_autoload();
+    $this->assertEqual('foo', Stash::get('__options__', 'autoloadable', null, true));
+    $this->assertNull(Stash::get('__options__', 'not-autoloadable', null, true));
   }
   
   function testAddOptionThatDoesntExist() {
@@ -25,14 +34,14 @@ class OptionsHelperTests extends UnitTestCase {
   
   function testUpdateOptionThatDoesntExist() {
     $this->assertNull(get_option('foo', null));
-    update_option('foo', 'bar');
+    $this->assertTrue(update_option('foo', 'bar'));
     $this->assertEqual('bar', get_option('foo'));
   }
 
   function testUpdateOptionThatDoesExist() {
     $this->assertNull(get_option('foo', null));
-    update_option('foo', 'bar');
-    update_option('foo', 'doo');
+    $this->assertTrue(update_option('foo', 'bar'));
+    $this->assertTrue(update_option('foo', 'doo'));
     $this->assertEqual('doo', get_option('foo'));
   }
   
@@ -41,6 +50,13 @@ class OptionsHelperTests extends UnitTestCase {
     $this->assertTrue(add_option('foo', 'bar'));
     delete_option('foo');
     $this->assertNull(get_option('foo'));
+  }
+  
+  function testHasOption() {
+    $this->assertFalse(has_option('foo'));
+    $this->assertTrue(add_option('foo', 'bar'));
+    $this->assertTrue(has_option('foo'));
+    $this->assertEqual('bar', get_option('foo'));
   }
   
   function testComplexTypes() {
