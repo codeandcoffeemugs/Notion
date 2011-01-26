@@ -80,7 +80,7 @@ $autoload['plugin'] = array();
 |
 */
 
-$autoload['config'] = array('options', 'cache');
+$autoload['config'] = array('options', 'cache', 'facebook');
 
 
 /*

@@ -6,6 +6,7 @@ class HomeController extends Controller {
 	}
 	
 	function index() {
+	  /*
 	  $this->config->load('facebook');
 	  $data['appId'] = $this->config->item('appId');
 		$data['secret'] = $this->config->item('secret');
@@ -18,7 +19,10 @@ class HomeController extends Controller {
 		
 		//$data['fb'] = new facebook();
 		$this->load->view('home/index',$data);
-		
+		*/
+		$this->load->library('facebook',$this->config->item('facebook'));
+    Facebook::$CURL_OPTS[CURLOPT_SSL_VERIFYPEER] = false;
+    $this->load->view('home/index');
 	}
 }
 

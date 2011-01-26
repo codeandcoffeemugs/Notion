@@ -46,27 +46,23 @@
         <h1>Slim UI</h1>
         <?php
        
-        	$facebook = new Facebook(array(
-            'appId' => $appId,
-            'secret' => $secret,
-            'cookie' => true
-          ));
-            $session = $facebook->getSession();
+            $session = $this->facebook->getSession();
             if($session == null) {
-              
-            }
+              // javascript login
+            } // else
             $me = null;
+           
             if($session) {
-                $uid = $facebook->getUser();
-                $me = $facebook->api('/me');
-                $access_token = $facebook->getAccessToken();
+                $uid = $this->facebook->getUser();
+                $me = $this->facebook->api('/me');
+                $access_token = $this->facebook->getAccessToken();
                 $exp = $session['expires'];
             }
             
             if($me) {
-              $logoutUrl = $facebook->getLogoutUrl();
+              $logoutUrl = $this->facebook->getLogoutUrl();
             } else {
-              $loginUrl = $facebook->getLoginUrl(array('req_perms' => 'offline_access,user_status,publish_stream,user_photos'));
+              $loginUrl = $this->facebook->getLoginUrl(array('req_perms' => 'offline_access,user_status,publish_stream,user_photos'));
             }
         ?>
           <?php if($me) { ?>
@@ -81,14 +77,14 @@
           </a>
           <?php } ?>
           <?php
-          $albums = $facebook->api('/me/albums');
+          $albums = $this->facebook->api('/me/albums');
           ?>
           <pre>
             <?php //var_dump($albums); ?>
             <?php
             foreach($albums['data'] as $album) {
               if($album['name'] == 'Family') {
-                $photos = $facebook->api("/{$album['id']}/photos");
+                $photos = $this->facebook->api("/{$album['id']}/photos");
                 //var_dump($photos);
                 foreach($photos['data'] as $photo) {
                   ?>
