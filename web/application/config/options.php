@@ -11,7 +11,7 @@
 | Autoloading - enabled or disabled?
 | -------------------------------------------------------------------
 */
-define('OPTIONS_ENABLE_AUTOLOADING', true);
-define('OPTIONS_DEFAULT_DBGROUP', 'default');
+if (!defined('OPTIONS_ENABLE_AUTOLOADING')) define('OPTIONS_ENABLE_AUTOLOADING', true);
+if (!defined('OPTIONS_DEFAULT_DBGROUP')) define('OPTIONS_DEFAULT_DBGROUP', 'default');
 
 $config['options'] = array();
