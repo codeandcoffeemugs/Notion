@@ -1,2 +1,3 @@
 .DS_Store
 web/system/logs/*
+web/application/config/*-testing.php
