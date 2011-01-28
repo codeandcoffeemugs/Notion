@@ -38,7 +38,8 @@ $opts = getopt(
     'x::',
     't::',
     'T',
-    'i'
+    'i',
+    'e::'
   ))
 );
 
@@ -52,15 +53,18 @@ Idea - a prototyping Framework for PHP developers
 Copyright (C) 2011  Fat Panda, LLC
 http://github.com/collegeman/idea
 
-Usage: php cli.php [-x:controller[/action] | -t:test_case | -T] [-d:db_group] 
+Usage: php cli.php [-x:controller[/action] | -t:test_case | -T | -i] [options] 
   or   php cli.php controller[/action]
   
-Options
+Functions:
  -x:<controller>[/<action>]       Run controller and action (or index in controller)
  -t:<test_case>                   Run a unit test case
  -T                               Run all unit tests
- -d:<db_group>                    Load the named database group instead of default
  -i                               Display the output of phpinfo()
+ 
+Options:
+ -d:<db_group>                    Load the named database group instead of default
+ -e:<environment>                 Set \$_ENV['CI_ENV'] equal to <environment>
 
 
 EOF;
@@ -160,6 +164,13 @@ else
 	}
 
 	define('APPPATH', BASEPATH.$application_folder.'/');
+}
+
+#
+# Set environment?
+#
+if ($env = @$opts['e']) {
+  $_ENV['CI_ENV'] = trim($env, ' :');
 }
 
 #
@@ -265,7 +276,7 @@ elseif (!empty($opts['t']) || isset($opts['T'])):
   
   
 #
-# Execute a controller/action?
+# Execute a controller[/action]?
 #
 elseif (!empty($opts['x']) || ( !$opts && count($argv) == 2 )):
 
