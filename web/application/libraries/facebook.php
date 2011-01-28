@@ -31,18 +31,27 @@ class Facebook extends FacebookClient {
    * automatically consult the request for a cookie or a session parameter
    * from which to derive authentication.
    */
-  function __construct($config = FACEBOOK_DEFAULT_APP) {
+  function __construct($config) {
     global $CFG;
-    $CFG->load('facebook');
-    $facebook = $CFG->item('facebook');
-    if ($cfg = @$facebook[$config]) {
-      if (!@$cfg['appId'] || !@$cfg['secret']) {
-        show_error('Facebook library has not been configured.');
+    
+    $default_app = defined('FACEBOOK_DEFAULT_APP') ? FACEBOOK_DEFAULT_APP : 'default';
+    
+    if (is_array($config)) {
+      // support app switching:
+      if (isset($config['facebook'][$default_app])) {
+        $config = $config['facebook'][$default_app];
       }
-      parent::__construct($cfg);
     } else {
+      $CFG->load('facebook');
+      $facebook = $CFG->item('facebook');
+      $config = @$facebook[$config];
+    }
+    
+    if (!$config) {
       show_error('Facebook library has not been configured.');
     }
+    
+    parent::__construct($config);
     
     $this->getSession();
   }
