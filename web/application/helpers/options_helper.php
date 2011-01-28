@@ -23,7 +23,7 @@
  * Based on the option model in WordPress.
  * @author Aaron Collegeman
  */
- 
+
 /**
  * Get an option $name
  * @param string $name The name of the option to load
@@ -178,6 +178,11 @@ function option_db($db_group = OPTIONS_DEFAULT_DBGROUP) {
   }
   
   if (!isset($instances[$db_group])) {
+    if (!function_exists('DB')) {
+      $loader = load_class('Loader');
+      $loader->database();
+    }
+
     log_message('info', "Creating Database Driver Class for options in [$db_group]");
     $instances[$db_group] = DB($db_group);
   }
@@ -190,13 +195,13 @@ function option_db($db_group = OPTIONS_DEFAULT_DBGROUP) {
  * @param string $db_group (optional) defaults to 'default'
  */ 
 function delete_all_options($db_group = OPTIONS_DEFAULT_DBGROUP) {
-  $db = DB($db_group);
+  $db = option_db($db_group);
   Stash::delete('__options__');
   $db->empty_table('options');
 }
 
 function options_autoload($db_group = OPTIONS_DEFAULT_DBGROUP) {
-  $db = DB($db_group);
+  $db = option_db($db_group);
   $all = $db->get_where('options', array('autoload' => true));
   foreach($all->result() as $opt) {
     log_message('info', "Auto-loaded option [$opt->option_name]");
