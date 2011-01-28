@@ -10,7 +10,7 @@
 |
 */
 
-$hook['pre_system'][] = array(
+$hook['pre_controller'][] = array(
   'function' => '_do_detect_environment',
   'filename' => 'environment.php',
   'filepath' => 'hooks'
