@@ -98,25 +98,31 @@
             if (!response.session) {
               FB.login(function(response) {
                 if (response.session) {
-                  $.post('<?php echo site_url('options/facebook') ?>', { session: response.session }, function() {
-                    alert('Session saved!');
+                  save_session(response.session, function() {
+                    $('.logout').show();
+                    $('.login').hide();
                   });
-                  $('.logout').show();
-                  $('.login').hide();
                 }
               }, { perms: all_perms });
             } else {
-              $('.login').hide();
-              $('.logout').show();
+              save_session(response.session, function() {
+                $('.login').hide();
+                $('.logout').show();
+              });
             }
           });
         };
         
+        window.save_session = function(session, callback) {
+          $.post('<?php echo site_url('options/facebook') ?>', { session: session }, callback);
+        };
+        
         window.logout = function() {
           FB.logout(function() { 
-            $.post('<?php echo site_url('options/facebook') ?>', { session: {} });
-            $('.logout').hide();
-            $('.login').show();
+            save_session({}, function() {
+              $('.logout').hide();
+              $('.login').show();
+            });
           });
         };
       
@@ -130,7 +136,7 @@
     </script>
     
     <div style="width: 200px; margin: 0 auto; padding:20px; border:1px solid #ddd; border-radius: 10px; text-align:right;">
-      <button onclick="login();" style="display:none;" class="login">Login</button>
+      <button onclick="login();" class="login">Login</button>
       <button onclick="logout();" style="display:none;" class="logout">Logout</button>
     </div>
     
