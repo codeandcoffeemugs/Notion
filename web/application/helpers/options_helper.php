@@ -199,6 +199,7 @@ function options_autoload($db_group = OPTIONS_DEFAULT_DBGROUP) {
   $db = DB($db_group);
   $all = $db->get_where('options', array('autoload' => true));
   foreach($all->result() as $opt) {
+    log_message('info', "Auto-loaded option [$opt->option_name]");
     $value = maybe_unserialize($opt->option_value);
     Stash::update('__options__', $opt->option_name, $value);
   }
