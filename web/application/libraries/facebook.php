@@ -26,10 +26,20 @@ class Facebook extends FacebookClient {
   
   /**
    * Creates a new instance of the Facebook API client, configuring it 
-   * according to the settings group named $config (see config/facebook.php).
+   * in one of several different ways.
+   * 
    * This constructor also calls FacebookClient->getSession, which will
    * automatically consult the request for a cookie or a session parameter
    * from which to derive authentication.
+   *
+   * @param mixed $config Will be specified in one of several ways:
+   *   - if loaded $CI->load->library('facebook'), $config is copied from the Config item 'facebook',
+   *      assumed to be structured like $config['facebook']['<app name>'] = array(settings expected by Facebook class)
+   *   - if loaded $CI->load->library('facebook', '<string>'), $config is <string>,
+   *      the config settings will be loaded from the Config item 'facebook', and the app settings
+   *      will be pulled from the index <string>
+   *   - if loaded $CI->load->library('facebook', array(...)), $config is array(...), and
+   *      array(...) will be passed directly to the Facebook class 
    */
   function __construct($config) {
     global $CFG;
