@@ -35,8 +35,18 @@
  */
 
 function _do_detect_environment() {
+  global $CFG;
+  
+  // if $_ENV['CI_ENV'] is already set, don't do anything
+  if (@$_ENV['CI_ENV']) {
+    return;
+  }
+  
   $server_name = @$_SERVER['HTTP_HOST'] OR @$_SERVER['SERVER_NAME'];
   if (preg_match('/(dev)|(local)/i', $server_name)) {
+    // dev environment, please:
     $_ENV['CI_ENV'] = 'dev';
+    // set logging threashold to info-level
+    $CFG->set_item('log_threshold', 3);
   }
 }
