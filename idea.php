@@ -39,7 +39,8 @@ $opts = getopt(
     't::',
     'T',
     'i',
-    'e::'
+    'e::',
+    'f::'
   ))
 );
 
@@ -53,19 +54,21 @@ Idea - a prototyping Framework for PHP developers
 Copyright (C) 2011  Fat Panda, LLC
 http://github.com/collegeman/idea
 
-Usage: php cli.php [-x:controller[/action] | -t:test_case | -T | -i] [options] 
+Usage: php cli.php [-x:controller[/action] | -f:</facebook/api> | -t:test_case | -T | -i] [options] 
   or   php cli.php controller[/action]
   
 Functions:
- -x:<controller>[/<action>]       Run controller and action (or index in controller)
- -t:<test_case>                   Run a unit test case
- -T                               Run all unit tests
- -i                               Display the output of phpinfo()
+ -x:<controller>[/<action>]         Run controller and action (or index in controller)
+ -f:</facebook/api>                 Invoke a specific endpoint in the Facebook Graph API
+ -t:<test_case>                     Run a unit test case
+ -T                                 Run all unit tests
+ -i                                 Display the output of phpinfo()
  
 Options:
- -d:<db_group>                    Load the named database group instead of default
- -e:<environment>                 Set \$_ENV['CI_ENV'] equal to <environment>
-
+ -d:<db_group>                      Load the named database group instead of default
+ -e:<environment>                   Set \$_ENV['CI_ENV'] equal to <environment>
+ -p:param1=value1&param2=value2...  Parse and load the query string into \$_REQUEST and \$_POST  
+ -g:param1=value1&param2=value2...  Parse and load the query string into \$_REQUEST and \$_GET
 
 EOF;
 exit; 
@@ -167,10 +170,26 @@ else
 }
 
 #
-# Set environment?
+# Set environment
 #
 if ($env = @$opts['e']) {
   $_ENV['CI_ENV'] = trim($env, ' :');
+}
+
+#
+# Set $_POST
+#
+if ($query = @$opts['p']) {
+  $_POST = array_merge($_POST, parse_str($query));
+  $_REQUEST = array_merge($_REQUEST, $_POST);
+}
+
+#
+# Set $_GET
+#
+if ($query = @$opts['g']) {
+  $_GET = array_merge($_GET, parse_str($query));
+  $_REQUEST = array_merge($_REQUEST, $_GET);
 }
 
 #
@@ -182,9 +201,9 @@ if (isset($opts['i'])):
   exit(0);
 
 #
-# Run a test case?
+# Run a test case or execute a Facebook request?
 #
-elseif (!empty($opts['t']) || isset($opts['T'])):
+elseif (!empty($opts['f']) || !empty($opts['t']) || isset($opts['T'])):
 
   define('CI_VERSION',	'1.7.3');
 
@@ -236,40 +255,59 @@ elseif (!empty($opts['t']) || isset($opts['T'])):
   
   $CI = new Controller();
   
-  require_once(APPPATH.'/simpletest/autorun.php');
+  if (!empty($opts['f'])) {
   
-  class AllTests extends TestSuite {
-    function AllTests() {
-      global $opts;
+    if (!($session = get_option('_core_facebook_session'))) {
+      echo "Core Facebook session not configured. Browse to options/facebook and login.\n";
+      exit(1);
+    }
+    
+    $path = trim($opts['f'], ' :');
+    
+    $CI->load->library('facebook');
+    
+    $CI->facebook->setSession($session, false);
+    
+    print_r($CI->facebook->api($path));
+    
+  } else {
+  
+    require_once(APPPATH.'/simpletest/autorun.php');
+  
+    class AllTests extends TestSuite {
+      function AllTests() {
+        global $opts;
       
-      // run an individual test:
-      if ($test = trim(@$opts['t'], ' :')) {
-        if (file_exists(($file = APPPATH.'tests/'.$test.'.php'))) {
-          $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'tests/'.$test.'_test.php'))) {
-          $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'tests/'.$test.'_tests.php'))) {
-          $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'tests/'.$test.'Test.php'))) {
-          $this->addFile($file);
-        } else if (file_exists(($file = APPPATH.'tests/'.$test.'Tests.php'))) {
-          $this->addFile($file);
-        } else {
-          echo "Test case file for '$test' does not exist.\n";
-          exit(1);
-        }
+        // run an individual test:
+        if ($test = trim(@$opts['t'], ' :')) {
+          if (file_exists(($file = APPPATH.'tests/'.$test.'.php'))) {
+            $this->addFile($file);
+          } else if (file_exists(($file = APPPATH.'tests/'.$test.'_test.php'))) {
+            $this->addFile($file);
+          } else if (file_exists(($file = APPPATH.'tests/'.$test.'_tests.php'))) {
+            $this->addFile($file);
+          } else if (file_exists(($file = APPPATH.'tests/'.$test.'Test.php'))) {
+            $this->addFile($file);
+          } else if (file_exists(($file = APPPATH.'tests/'.$test.'Tests.php'))) {
+            $this->addFile($file);
+          } else {
+            echo "Test case file for '$test' does not exist.\n";
+            exit(1);
+          }
         
-      // run all tests:
-      } else {
-        $dir = opendir(APPPATH.'/tests/');
-        while(($file = readdir($dir)) !== false) {
-          if (substr(strrev($file), 0, 3) == 'php') {
-            $this->addFile(sprintf('%s/%s', APPPATH.'tests', $file));
+        // run all tests:
+        } else {
+          $dir = opendir(APPPATH.'/tests/');
+          while(($file = readdir($dir)) !== false) {
+            if (substr(strrev($file), 0, 3) == 'php') {
+              $this->addFile(sprintf('%s/%s', APPPATH.'tests', $file));
+            }
           }
         }
-      }
       
+      }
     }
+  
   }
   
   exit(0);
