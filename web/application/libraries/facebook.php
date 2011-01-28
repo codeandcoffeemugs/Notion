@@ -20,7 +20,7 @@
 require('facebook-sdk-2.1.2.php');
  
 // don't verify SSL cert
-FacebookClient::$CURL_OPTS[CURLOPT_SSL_VERIFYHOST] = false;
+FacebookClient::$CURL_OPTS[CURLOPT_SSL_VERIFYPEER] = false;
  
 class Facebook extends FacebookClient {
   
@@ -28,10 +28,6 @@ class Facebook extends FacebookClient {
    * Creates a new instance of the Facebook API client, configuring it 
    * in one of several different ways.
    * 
-   * This constructor also calls FacebookClient->getSession, which will
-   * automatically consult the request for a cookie or a session parameter
-   * from which to derive authentication.
-   *
    * @param mixed $config Will be specified in one of several ways:
    *   - if loaded $CI->load->library('facebook'), $config is copied from the Config item 'facebook',
    *      assumed to be structured like $config['facebook']['<app name>'] = array(settings expected by Facebook class)
@@ -57,13 +53,11 @@ class Facebook extends FacebookClient {
       $config = @$facebook[$config];
     }
     
-    if (!$config) {
+    if (!$config || !@$config['appId'] || !@$config['secret']) {
       show_error('Facebook library has not been configured.');
     }
     
     parent::__construct($config);
-    
-    $this->getSession();
   }
   
 }
