@@ -90,7 +90,7 @@ class MY_Loader extends CI_Loader {
   		}
   	}
 		
-		return @$config;
+		return isset($config) ? $config : null;
 	}
   
 }
