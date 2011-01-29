@@ -30,7 +30,7 @@ class MY_Router extends CI_Router {
   }
   
   function set_class($value) {
-    parent::set_class($value.'Controller');
+    parent::set_class($value.'controller');
   }
   
   function _validate_request($segments)
