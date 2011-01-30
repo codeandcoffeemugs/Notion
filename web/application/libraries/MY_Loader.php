@@ -30,6 +30,29 @@ class MY_Loader extends CI_Loader {
   }
   
   /**
+	 * If $_ENV['CI_ENV'] is set and there exists a database group in configuration
+	 * by the same name, and $params is empty, then the value $_ENV['CI_ENV'] is
+	 * used as the active DB group
+	 *
+	 * @access	public
+	 * @param	string	the DB credentials
+	 * @param	bool	whether to return the DB object
+	 * @param	bool	whether to enable active record (this allows us to override the config setting)
+	 * @return	object
+	 */	
+	function database($params = '', $return = FALSE, $active_record = FALSE)
+	{
+	  if ($params == '' && !empty($_ENV['CI_ENV'])) {
+	    include(APPPATH.'config/database'.EXT);
+      if (isset($db) && isset($db[$_ENV['CI_ENV']])) {
+        $params = $_ENV['CI_ENV'];
+      }
+    }
+    
+    parent::database($params, $return, $active_record);
+	}
+  
+  /**
    * @param mixed $library A single library or an array of libraries
    * @param mixed $params Can be an array or a scalar value - CI_Loader only allows for arrays
    * @param string $object_name The name to use for storing the object reference on the global $CI object
