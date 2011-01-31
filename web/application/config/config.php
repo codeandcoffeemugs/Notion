@@ -232,7 +232,7 @@ $config['encryption_key'] = "";
 | 'time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'idea_session';
+$config['sess_cookie_name']		= 'idea';
 $config['sess_expiration']		= 1800;
 $config['sess_encrypt_cookie']	= FALSE;
 $config['sess_use_database']	= FALSE;
