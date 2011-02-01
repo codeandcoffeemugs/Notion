@@ -18,7 +18,7 @@ class MY_Config extends CI_Config {
 	 */	
 	function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE)
 	{
-	  if ($env = @$_ENV['CI_ENV']) {
+	  if (isset($_ENV['CI_ENV']) && ($env = $_ENV['CI_ENV'])) {
 	    
 	    $env_file = $file . '-' . $env;
 	  

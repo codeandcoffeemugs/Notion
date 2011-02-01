@@ -85,7 +85,7 @@ class MY_Loader extends CI_Loader {
 	
 	function _get_config($library) {
 
-	  if ($env = @$_ENV['CI_ENV']) {
+	  if (isset($_ENV['CI_ENV']) && ($env = $_ENV['CI_ENV'])) {
 	    $file = strtolower($library . '-' . $env);
 	    
 	    if (file_exists(APPPATH.'config/'.$file.EXT))
