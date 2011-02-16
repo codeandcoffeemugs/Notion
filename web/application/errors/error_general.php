@@ -24,7 +24,7 @@ h1 {
 font-weight:		normal;
 font-size:			14px;
 color:				#990000;
-margin: 			0 0 4px 0;
+margin:				0 0 4px 0;
 }
 </style>
 </head>
