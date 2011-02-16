@@ -48,6 +48,8 @@ $platforms = array (
 // The order of this array should NOT be changed. Many browsers return
 // multiple browser types so we want to identify the sub-type first.
 $browsers = array(
+					'Flock'				=> 'Flock',
+					'Chrome'			=> 'Chrome',
 					'Opera'				=> 'Opera',
 					'MSIE'				=> 'Internet Explorer',
 					'Internet Explorer'	=> 'Internet Explorer',
@@ -92,6 +94,7 @@ $mobiles = array(
 					'nokia'				=> "Nokia",
 					'palm'				=> "Palm",
 					'iphone'			=> "Apple iPhone",
+					'ipad'				=> "iPad",
 					'ipod'				=> "Apple iPod Touch",
 					'sony'				=> "Sony Ericsson",
 					'ericsson'			=> "Sony Ericsson",
@@ -172,4 +175,4 @@ $robots = array(
 				);
 
 /* End of file user_agents.php */
-/* Location: ./system/application/config/user_agents.php */
+/* Location: ./application/config/user_agents.php */

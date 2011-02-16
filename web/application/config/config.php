@@ -10,6 +10,9 @@
 |
 |	http://example.com/
 |
+| If this is not set then CodeIgniter will guess the protocol, domain and
+| path to your installation.
+|
 */
 // setup base_url automatically
 $config['base_url']	= 'http'.(isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON' ? 's' : '').'://'.@$_SERVER['HTTP_HOST'].'/';
@@ -135,6 +138,9 @@ $config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
 | By default CodeIgniter uses search-engine friendly segment based URLs:
 | example.com/who/what/where/
 |
+| By default CodeIgniter enables access to the $_GET array.  If for some
+| reason you would like to disable it, set 'allow_get_array' to FALSE.
+|
 | You can optionally enable standard query string based URLs:
 | example.com?who=me&what=something&where=here
 |
@@ -149,10 +155,11 @@ $config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
 | use segment based URLs.
 |
 */
+$config['allow_get_array']		= TRUE;
 $config['enable_query_strings'] = FALSE;
-$config['controller_trigger'] 	= 'c';
-$config['function_trigger'] 	= 'm';
-$config['directory_trigger'] 	= 'd'; // experimental not currently in use
+$config['controller_trigger']	= 'c';
+$config['function_trigger']		= 'm';
+$config['directory_trigger']	= 'd'; // experimental not currently in use
 
 /*
 |--------------------------------------------------------------------------
@@ -182,7 +189,7 @@ $config['log_threshold'] = 1;
 |--------------------------------------------------------------------------
 |
 | Leave this BLANK unless you would like to set something other than the default
-| system/logs/ folder.  Use a full server path with trailing slash.
+| application/logs/ folder. Use a full server path with trailing slash.
 |
 */
 $config['log_path'] = '';
@@ -214,8 +221,8 @@ $config['cache_path'] = '';
 | Encryption Key
 |--------------------------------------------------------------------------
 |
-| If you use the Encryption class or the Sessions class with encryption
-| enabled you MUST set an encryption key.  See the user guide for info.
+| If you use the Encryption class or the Session class you
+| MUST set an encryption key.  See the user guide for info.
 |
 */
 $config['encryption_key'] = "";
@@ -265,6 +272,23 @@ $config['cookie_path']		= "/";
 |
 */
 $config['global_xss_filtering'] = FALSE;
+
+/*
+|--------------------------------------------------------------------------
+| Cross Site Request Forgery
+|--------------------------------------------------------------------------
+| Enables a CSRF cookie token to be set. When set to TRUE, token will be
+| checked on a submitted form. If you are accepting user data, it is strongly
+| recommended CSRF protection be enabled.
+|
+| 'csrf_token_name' = The token name
+| 'csrf_cookie_name' = The cookie name
+| 'csrf_expire' = The number in seconds the token should expire.
+*/
+$config['csrf_protection'] = FALSE;
+$config['csrf_token_name'] = 'csrf_test_name';
+$config['csrf_cookie_name'] = 'csrf_cookie_name';
+$config['csrf_expire'] = 7200;
 
 /*
 |--------------------------------------------------------------------------
@@ -327,4 +351,4 @@ $config['proxy_ips'] = '';
 
 
 /* End of file config.php */
-/* Location: ./system/application/config/config.php */
+/* Location: ./application/config/config.php */
