@@ -47,7 +47,7 @@ function _do_detect_environment() {
       // set logging threashold to info-level
       $CFG->set_item('log_threshold', 3);
       $logger = load_class('Log');
-      $logger->_threshold = 3;
+      $logger->setThreshold(3);
     }
   
   }
