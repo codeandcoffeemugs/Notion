@@ -8,7 +8,7 @@ It's a prototyping platform for PHP developers.
 
 Idea is built on top of a lot of great projects. Here's a list:
 
-* [CodeIgniter](http://www.codeigniter.com) 1.7.3 - the best Web framework I've ever used: nothing gets out of your way like CodeIgniter
+* [CodeIgniter](http://www.codeigniter.com) 2.0.0 - the best Web framework I've ever used: nothing gets out of your way like CodeIgniter
 * [HTML5 Boilerplate](http://html5boilerplate.com/) - if you're gonna do HTML5, get a head start, thanks to [Paul Irish](http://paulirish.com/)
 * [SimpleTest](http://www.simpletest.org) 1.0.1 - unit testing for PHP
 
