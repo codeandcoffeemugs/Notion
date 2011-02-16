@@ -21,7 +21,7 @@
 /**
  * A utility controller.
  */
-class OptionsController extends Controller {
+class OptionsController extends CI_Controller {
   
   const CORE_FACEBOOK_SESSION = '_core_facebook_session';
   

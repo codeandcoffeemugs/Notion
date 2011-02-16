@@ -1,13 +1,10 @@
 <?php
-class HomeController extends Controller {
+class HomeController extends CI_Controller {
 
-	function HomeController() {
-		parent::Controller();	
-	}
-	
 	function index() {
 		$this->load->view('home/index');
 	}
+	
 }
 
 /* End of file home.php */
