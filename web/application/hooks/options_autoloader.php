@@ -19,7 +19,7 @@
  */
  
 function _do_options_autoload() {
-  if (OPTIONS_ENABLE_AUTOLOADING) {
+  if (defined('OPTIONS_ENABLE_AUTOLOADING') && OPTIONS_ENABLE_AUTOLOADING) {
     log_message('debug', 'Auto-loading options.');
     options_autoload();
   } else {
