@@ -177,14 +177,17 @@ function option_db($db_group = OPTIONS_DEFAULT_DBGROUP) {
     $instances = array();
   }
   
-  if (!isset($instances[$db_group])) {
-    if (!function_exists('DB')) {
-      $loader = load_class('Loader');
-      $loader->database();
+  if ($db_group == '' && !empty($_ENV['CI_ENV'])) {
+    include(APPPATH.'config/database'.EXT);
+    if (isset($db) && isset($db[$_ENV['CI_ENV']])) {
+      $db_group = $_ENV['CI_ENV'];
     }
-
+  }
+  
+  if (!isset($instances[$db_group])) {
     log_message('info', "Creating Database Driver Class for options in [$db_group]");
-    $instances[$db_group] = DB($db_group);
+    $loader = load_class('Loader');
+    $instances[$db_group] = $loader->database($db_group, true, true);
   }
   
   return $instances[$db_group];

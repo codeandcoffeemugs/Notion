@@ -45,7 +45,7 @@ class MY_Loader extends CI_Loader {
       }
     }
     
-    parent::database($params, $return, $active_record);
+    return parent::database($params, $return, $active_record);
 	}
   
   /**
