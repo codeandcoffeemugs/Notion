@@ -36,7 +36,7 @@ class MY_Loader extends CI_Loader {
 	 * @param	bool	whether to enable active record (this allows us to override the config setting)
 	 * @return	object
 	 */	
-	function database($params = '', $return = FALSE, $active_record = FALSE)
+	function database($params = '', $return = FALSE, $active_record = TRUE)
 	{
 	  if ($params == '' && !empty($_ENV['CI_ENV'])) {
 	    include(APPPATH.'config/database'.EXT);
