@@ -43,74 +43,64 @@
 
   <div id="container">
     <header>
-      
         <h1>Slim UI</h1>
-        <div id="fb-root"></div>
-        
         <?php
+       
+            $session = $this->facebook->getSession();
+            if($session == null) {
+              // javascript login
+            } // else
+            $me = null;
+           
+            if($session) {
+                $uid = $this->facebook->getUser();
+                $me = $this->facebook->api('/me');
+                $access_token = $this->facebook->getAccessToken();
+                $exp = $session['expires'];
+            }
+            
+            if($me) {
+              $logoutUrl = $this->facebook->getLogoutUrl();
+            } else {
+              $loginUrl = $this->facebook->getLoginUrl(array('req_perms' => 'user_status,publish_stream,user_photos'));
+            }
+        ?>
+          <?php if($me) { ?>
+            <pre>
+              <?php print_r($session); ?>
+            </pre>
+            <a href="<?=$logoutUrl ?>"><img src="http://static.ak.fbcdn.net/rsrc.php/z2Y31/hash/cxrz4k7j.gif" />
+              </a>
+          <?php } else { ?>
+            <a href="<?=$loginUrl ?>">
+          <img src="http://static.ak.fbcdn.net/rsrc.php/zB6N8/hash/4li2k73z.gif" />
+          </a>
+          <?php } ?>
+          <?php
+          $albums = $this->facebook->api('/me/albums');
+          ?>
+          <pre>
+            <?php //var_dump($albums); ?>
+            <?php
+            foreach($albums['data'] as $album) {
+              if($album['name'] == 'Family') {
+                $photos = $this->facebook->api("/{$album['id']}/photos");
+                //var_dump($photos);
+                foreach($photos['data'] as $photo) {
+                  ?>
+                  <img src="<?php echo $photo['source']; ?>" />
+                  <?php
+                }
+              }
+            }
+            ?>
+          </pre>
         
-        $session = $this->facebook->getSession();
-        if(!$session) {
-          $login = $this->facebook->getLoginUrl(array('req_perms' => 'email,friends_photos'));
-           echo anchor($login,'Login');
-       } else {
-         $logout = $this->facebook->getLogoutUrl();
-         echo anchor($logout,'Logout'); 
-         }
-         $me = $this->facebook->api('/me');
-         $accessToken = $session['access_token'];
-         $uid = $this->facebook->getUser();
-            print_r($session);
-         ?>
-         <h2>Greetings <?php echo $me['name'];  ?> <img src="https://graph.facebook.com/<?php echo $uid; ?>/picture" /></h2>
+        
     </header>
     
     <div id="main">
      
-     <?php 
-     $req = $this->facebook->api('/me/friends',array('limit' => 5,'offset' => 5)); 
-     ?>
-      <pre>
-      <?php print_r($req['data']); ?>
-      </pre>
-      <!-- List pictures of friends -->
-      <?php foreach($req['data'] as $friend): ?>
-        <div class='fbFriends'>
-          <?php 
-          $albums = $this->facebook->api($friend['id']. "/albums", array('access_token' => $accessToken)); 
-          ?>
-          <pre>
-            <?php //print_r($albums); ?>
-          </pre>
-          <h1>*********************************************************************************************</h1>
-          <?php foreach($albums['data'] as $al) {
-                       if($al['name'] == 'Profile Pictures') {
-                         $wall = $al['id'];
-                         echo $wall;
-            }
-          } ?>
-          <h1>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</h1>
-          <img src="https://graph.facebook.com/<?php echo $friend['id']; ?>/picture" /><a href="https://graph.facebook.com/<?php echo $friend['id']; ?>/albums?access_token=<?=$accessToken ?>"><h2><?php echo $friend['name']; ?></h2></a>
-        </div>
-      <?php endforeach; ?>
-      <hr />
-      
-      <!-- grab the uid to grab the album id -->
-      <?php
-      $joey = $req['data'][3]['id'];
-      $x = $this->facebook->api('/' .$joey. '/albums');
-      ?>
-      <pre>
-        <?php print_r($x['data']); ?>
-      </pre>
-      <div>
-        <?php foreach($x['data'] as $album): ?>
-          <h3><a href="<?php echo $album['link']; ?>"><?php echo $album['name']; ?></a></h3>
-        <?php endforeach; ?>
-        
-        
-        <!-- http://www.facebook.com/album.php?aid=2165029&id=25515241 -->
-      </div>
     </div>
     
     <footer>
@@ -156,14 +146,6 @@
    //    })(document, 'script');
   </script>
   
-      <script src="http://connect.facebook.net/en_US/all.js"></script>
-      <script>
-        FB.init({appId: '<?=$appId; ?>', status: true,
-                 cookie: true, xfbml: true});
-        FB.Event.subscribe('auth.login', function(response) {
-          window.location.reload();
-        });
-      </script>
  
 </body>
 </html>

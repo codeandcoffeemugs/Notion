@@ -20,10 +20,29 @@ class HomeController extends Controller {
 		//$data['fb'] = new facebook();
 		$this->load->view('home/index',$data);
 		*/
+		
 		$this->load->library('facebook',$this->config->item('facebook'));
     Facebook::$CURL_OPTS[CURLOPT_SSL_VERIFYPEER] = false;
-    $this->load->view('home/index');
+    $appinfo = $this->config->item("facebook");
+    $data['appId'] = $appinfo['appId'];
+    $data['base'] = $this->config->item('base_url');
+    $this->load->view('home/index',$data);
 	}
+	
+	// function logout() {
+	//     //setcookie('','',time() - 3600);
+	//     // $appinfo = $this->config->item("facebook");
+	//     //    $appId = $appinfo['appId'];
+	//     echo "<pre>";
+	//     print_r($_REQUEST);
+	//     echo "</pre>";
+	//     $chunks = $_GET;
+	//     $chuncks = explode('/', $chunks);
+	//     echo $chunks[2];
+	//     $cookie = "fbs_" .$chunks[2];
+	//     setcookie($cookie,'',time() - 3600);
+	  //header('Location: http://slimui.localhost');
+	//}
 }
 
 /* End of file home.php */
