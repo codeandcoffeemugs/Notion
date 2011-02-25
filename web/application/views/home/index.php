@@ -48,19 +48,11 @@
         <div id="fb-root"></div>
         
         <?php
-        
-        $session = $this->facebook->getSession();
-        if(!$session) {
-          $login = $this->facebook->getLoginUrl(array('req_perms' => 'email,friends_photos'));
-           echo anchor($login,'Login');
+       if($login) {
+         echo $login;
        } else {
-         $logout = $this->facebook->getLogoutUrl();
-         echo anchor($logout,'Logout'); 
-         }
-         $me = $this->facebook->api('/me');
-         $accessToken = $session['access_token'];
-         $uid = $this->facebook->getUser();
-            print_r($session);
+         echo $logout;
+       }
          ?>
          <h2>Greetings <?php echo $me['name'];  ?> <img src="https://graph.facebook.com/<?php echo $uid; ?>/picture" /></h2>
     </header>
@@ -68,48 +60,36 @@
     <div id="main">
      
      <?php 
-     $req = $this->facebook->api('/me/friends',array('limit' => 5,'offset' => 5)); 
+     $req = $this->facebook->api('/me/friends',array('limit' => 5,'offset' => 15)); 
      ?>
       <pre>
-      <?php print_r($req['data']); ?>
+      <?php //print_r($req['data']); ?>
       </pre>
       <!-- List pictures of friends -->
       <?php foreach($req['data'] as $friend): ?>
         <div class='fbFriends'>
           <?php 
-          $albums = $this->facebook->api($friend['id']. "/albums", array('access_token' => $accessToken)); 
+          $albums = $this->facebook->api($friend['id']. "/albums", array('access_token' => $accessToken)); // grabbing all albums
           ?>
-          <pre>
-            <?php //print_r($albums); ?>
-          </pre>
-          <h1>*********************************************************************************************</h1>
+          
           <?php foreach($albums['data'] as $al) {
+                      //$wall = false;
                        if($al['name'] == 'Profile Pictures') {
                          $wall = $al['id'];
-                         echo $wall;
+                         //echo $wall;
             }
           } ?>
           <h1>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</h1>
-          <img src="https://graph.facebook.com/<?php echo $friend['id']; ?>/picture" /><a href="https://graph.facebook.com/<?php echo $friend['id']; ?>/albums?access_token=<?=$accessToken ?>"><h2><?php echo $friend['name']; ?></h2></a>
+          <?php if($wall): ?>
+          <img src="https://graph.facebook.com/<?php echo $friend['id']; ?>/picture" /><a id=<?=$wall; ?> href="" class="getAlbum" ><h2><?php echo $friend['name']; $wall = "";  ?></h2></a>
+          <?php else: ?>
+            <img src="https://graph.facebook.com/<?php echo $friend['id']; ?>/picture" /><h2><?php echo $friend['name']; ?></h2>
+          <?php endif; ?>
         </div>
       <?php endforeach; ?>
       <hr />
-      
-      <!-- grab the uid to grab the album id -->
-      <?php
-      $joey = $req['data'][3]['id'];
-      $x = $this->facebook->api('/' .$joey. '/albums');
-      ?>
-      <pre>
-        <?php print_r($x['data']); ?>
-      </pre>
-      <div>
-        <?php foreach($x['data'] as $album): ?>
-          <h3><a href="<?php echo $album['link']; ?>"><?php echo $album['name']; ?></a></h3>
-        <?php endforeach; ?>
-        
-        
-        <!-- http://www.facebook.com/album.php?aid=2165029&id=25515241 -->
+      <div id="picsGoHere"></div>
+     
       </div>
     </div>
     
@@ -156,12 +136,25 @@
    //    })(document, 'script');
   </script>
   
-      <script src="http://connect.facebook.net/en_US/all.js"></script>
-      <script>
-        FB.init({appId: '<?=$appId; ?>', status: true,
-                 cookie: true, xfbml: true});
-        FB.Event.subscribe('auth.login', function(response) {
-          window.location.reload();
+       <script src="http://connect.facebook.net/en_US/all.js"></script>
+      //      <script>
+      //        FB.init({appId: '<?=$appId; ?>', status: true,
+      //                 cookie: true, xfbml: true});
+      //        FB.Event.subscribe('auth.login', function(response) {
+      //          window.location.reload();
+      //        });
+           </script>
+      <script type="text/javascript" charset="utf-8">
+        $('a').click(function(){
+          var albumId = $(this).attr('id');
+          var accessToken = '<?php echo $accessToken; ?>';
+          var url = 'https://graph.facebook.com/' +albumId+ '/photos?access_token=' +accessToken+ '&callback=?';
+          $.getJSON(url, function(data){
+                    var imgSrc = data.data[0].source;
+                    alert(imgSrc);           
+                              });
+          //alert(url);
+          return false;
         });
       </script>
  

@@ -6,43 +6,28 @@ class HomeController extends Controller {
 	}
 	
 	function index() {
-	  /*
-	  $this->config->load('facebook');
-	  $data['appId'] = $this->config->item('appId');
-		$data['secret'] = $this->config->item('secret');
-		$data['apiKey'] = $this->config->item('apiKey');
-		
-		$this->load->helper('facebook');
-		
-		// prepare and create the data for the view
-	
-		
-		//$data['fb'] = new facebook();
-		$this->load->view('home/index',$data);
-		*/
 		
 		$this->load->library('facebook',$this->config->item('facebook'));
     Facebook::$CURL_OPTS[CURLOPT_SSL_VERIFYPEER] = false;
     $appinfo = $this->config->item("facebook");
     $data['appId'] = $appinfo['appId'];
     $data['base'] = $this->config->item('base_url');
+    $session = $this->facebook->getSession();
+    $data['login'] = NULL;
+    $data['logout'] = NULL;
+      if(!$session) {
+        $login = $this->facebook->getLoginUrl(array('req_perms' => 'email,friends_photos'));
+        $data['login'] = "anchor($login,'Login')";
+     } else {
+       $logout = $this->facebook->getLogoutUrl();
+       $data['me'] = $this->facebook->api('/me');
+       $data['accessToken'] = $session['access_token'];
+       $data['uid'] = $this->facebook->getUser();
+       $data['logout'] = "<a href='" .$logout. "'>Logout</a>"; 
+       }
+    
     $this->load->view('home/index',$data);
 	}
-	
-	// function logout() {
-	//     //setcookie('','',time() - 3600);
-	//     // $appinfo = $this->config->item("facebook");
-	//     //    $appId = $appinfo['appId'];
-	//     echo "<pre>";
-	//     print_r($_REQUEST);
-	//     echo "</pre>";
-	//     $chunks = $_GET;
-	//     $chuncks = explode('/', $chunks);
-	//     echo $chunks[2];
-	//     $cookie = "fbs_" .$chunks[2];
-	//     setcookie($cookie,'',time() - 3600);
-	  //header('Location: http://slimui.localhost');
-	//}
 }
 
 /* End of file home.php */
