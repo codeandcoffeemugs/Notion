@@ -119,12 +119,8 @@ function cache_delete($cache_key, $strategy = CACHE_STRATEGY_DEFAULT, $options =
  *    decrement   Decrement the value stored at $cache_key by $value; if no value exists at $cache_key, or if the value is non-numeric, $value is stored; resulting value will not be less than 0; returns the new value on success, false on failure
  *    delete      Deletes the value stored at $cache_key; returns true on success, false when no value existed to delete
  */
-function cache_option($action, $cache_key, $value = null, $timeout = 0, $db_group = 'default') {
+function cache_option($action, $cache_key, $value = null, $timeout = 0, $db_group = null) {
   global $CFG;
-
-  if (!$db_group) {
-    $db_group = 'default';
-  }
 
   if ($CFG->item('log_threshold') >= 3) {
     log_message('info', sprintf("cache_option::%s(cache_key:%s, value:%s, timeout:%s, db_group:%s)", $action, $cache_key, maybe_serialize($value), $timeout, $db_group));

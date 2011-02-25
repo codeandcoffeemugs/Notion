@@ -1,2 +1,5 @@
 .DS_Store
-web/system/logs/*
+web/application/logs/*
+web/application/config/*-test.php
+web/application/config/*-local.php
+web/application/config/*-dev.php

@@ -17,7 +17,7 @@
 #
 # What is the default caching strategy - "options" or "memcached"
 #
-define('CACHE_STRATEGY_DEFAULT', 'options');
+if (!defined('CACHE_STRATEGY_DEFAULT')) define('CACHE_STRATEGY_DEFAULT', 'options');
 
 /*
 | -------------------------------------------------------------------

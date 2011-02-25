@@ -10,6 +10,9 @@
 |
 |	http://example.com/
 |
+| If this is not set then CodeIgniter will guess the protocol, domain and
+| path to your installation.
+|
 */
 // setup base_url automatically
 $config['base_url']	= 'http'.(isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON' ? 's' : '').'://'.@$_SERVER['HTTP_HOST'].'/';
@@ -42,7 +45,7 @@ $config['index_page'] = ''; //"index.php";
 | 'ORIG_PATH_INFO'	Uses the ORIG_PATH_INFO
 |
 */
-$config['uri_protocol']	= "AUTO";
+$config['uri_protocol']	= "REQUEST_URI";
 
 /*
 |--------------------------------------------------------------------------
@@ -89,7 +92,7 @@ $config['charset'] = "UTF-8";
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = FALSE;
+$config['enable_hooks'] = TRUE;
 
 
 /*
@@ -135,6 +138,9 @@ $config['permitted_uri_chars'] = 'a-z 0-9?~%.:_\-';
 | By default CodeIgniter uses search-engine friendly segment based URLs:
 | example.com/who/what/where/
 |
+| By default CodeIgniter enables access to the $_GET array.  If for some
+| reason you would like to disable it, set 'allow_get_array' to FALSE.
+|
 | You can optionally enable standard query string based URLs:
 | example.com?who=me&what=something&where=here
 |
@@ -149,10 +155,12 @@ $config['permitted_uri_chars'] = 'a-z 0-9?~%.:_\-';
 | use segment based URLs.
 |
 */
-$config['enable_query_strings'] = TRUE;
-$config['controller_trigger'] 	= 'c';
-$config['function_trigger'] 	= 'm';
-$config['directory_trigger'] 	= 'd'; // experimental not currently in use
+
+$config['allow_get_array']		= TRUE;
+$config['enable_query_strings'] = FALSE;
+$config['controller_trigger']	= 'c';
+$config['function_trigger']		= 'm';
+$config['directory_trigger']	= 'd'; // experimental not currently in use
 
 /*
 |--------------------------------------------------------------------------
@@ -174,7 +182,7 @@ $config['directory_trigger'] 	= 'd'; // experimental not currently in use
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 3;
+$config['log_threshold'] = 1;
 
 /*
 |--------------------------------------------------------------------------
@@ -182,7 +190,7 @@ $config['log_threshold'] = 3;
 |--------------------------------------------------------------------------
 |
 | Leave this BLANK unless you would like to set something other than the default
-| system/logs/ folder.  Use a full server path with trailing slash.
+| application/logs/ folder. Use a full server path with trailing slash.
 |
 */
 $config['log_path'] = '';
@@ -214,11 +222,11 @@ $config['cache_path'] = '';
 | Encryption Key
 |--------------------------------------------------------------------------
 |
-| If you use the Encryption class or the Sessions class with encryption
-| enabled you MUST set an encryption key.  See the user guide for info.
+| If you use the Encryption class or the Session class you
+| MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = "";
+$config['encryption_key'] = "you-must-change-this";
 
 /*
 |--------------------------------------------------------------------------
@@ -228,15 +236,15 @@ $config['encryption_key'] = "";
 | 'session_cookie_name' = the name you want for the cookie
 | 'encrypt_sess_cookie' = TRUE/FALSE (boolean).  Whether to encrypt the cookie
 | 'session_expiration'  = the number of SECONDS you want the session to last.
-|  by default sessions last 7200 seconds (two hours).  Set to zero for no expiration.
+|  by default sessions last 1800 seconds (30 minutes).  Set to zero for no expiration.
 | 'time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'ci_session';
-$config['sess_expiration']		= 7200;
+$config['sess_cookie_name']		= 'idea';
+$config['sess_expiration']		= 1800;
 $config['sess_encrypt_cookie']	= FALSE;
 $config['sess_use_database']	= FALSE;
-$config['sess_table_name']		= 'ci_sessions';
+$config['sess_table_name']		= 'my_sessions';
 $config['sess_match_ip']		= FALSE;
 $config['sess_match_useragent']	= TRUE;
 $config['sess_time_to_update'] 	= 300;
@@ -265,6 +273,23 @@ $config['cookie_path']		= "/";
 |
 */
 $config['global_xss_filtering'] = FALSE;
+
+/*
+|--------------------------------------------------------------------------
+| Cross Site Request Forgery
+|--------------------------------------------------------------------------
+| Enables a CSRF cookie token to be set. When set to TRUE, token will be
+| checked on a submitted form. If you are accepting user data, it is strongly
+| recommended CSRF protection be enabled.
+|
+| 'csrf_token_name' = The token name
+| 'csrf_cookie_name' = The cookie name
+| 'csrf_expire' = The number in seconds the token should expire.
+*/
+$config['csrf_protection'] = FALSE;
+$config['csrf_token_name'] = 'csrf_test_name';
+$config['csrf_cookie_name'] = 'csrf_cookie_name';
+$config['csrf_expire'] = 7200;
 
 /*
 |--------------------------------------------------------------------------
@@ -327,4 +352,4 @@ $config['proxy_ips'] = '';
 
 
 /* End of file config.php */
-/* Location: ./system/application/config/config.php */
+/* Location: ./application/config/config.php */

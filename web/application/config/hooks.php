@@ -10,11 +10,17 @@
 |
 */
 
-$hook['pre_controller'] = array(
-  'function' => 'do_options_autoload',
+$hook['pre_controller'][] = array(
+  'function' => '_do_detect_environment',
+  'filename' => 'environment.php',
+  'filepath' => 'hooks'
+);
+
+$hook['post_controller_constructor'][] = array(
+  'function' => '_do_options_autoload',
   'filename' => 'options_autoloader.php',
   'filepath' => 'hooks'
 );
 
 /* End of file hooks.php */
-/* Location: ./system/application/config/hooks.php */
+/* Location: ./application/config/hooks.php */

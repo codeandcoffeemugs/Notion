@@ -1,4 +1,7 @@
-<html>
+<?php if (defined('ON_CLI')): ?>
+<?php echo $heading; ?>: <?php echo $message; ?>
+
+<?php else: ?><html>
 <head>
 <title>Error</title>
 <style type="text/css">
@@ -21,7 +24,7 @@ h1 {
 font-weight:		normal;
 font-size:			14px;
 color:				#990000;
-margin: 			0 0 4px 0;
+margin:				0 0 4px 0;
 }
 </style>
 </head>
@@ -32,3 +35,5 @@ margin: 			0 0 4px 0;
 	</div>
 </body>
 </html>
+
+<?php endif; ?>

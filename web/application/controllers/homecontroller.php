@@ -1,10 +1,6 @@
 <?php
-class HomeController extends Controller {
+class HomeController extends CI_Controller {
 
-	function HomeController() {
-		parent::Controller();	
-	}
-	
 	function index() {
 		
 		$this->load->library('facebook',$this->config->item('facebook'));
@@ -28,6 +24,7 @@ class HomeController extends Controller {
     
     $this->load->view('home/index',$data);
 	}
+	
 }
 
 /* End of file home.php */

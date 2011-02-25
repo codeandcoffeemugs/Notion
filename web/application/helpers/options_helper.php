@@ -23,7 +23,7 @@
  * Based on the option model in WordPress.
  * @author Aaron Collegeman
  */
- 
+
 /**
  * Get an option $name
  * @param string $name The name of the option to load
@@ -177,9 +177,17 @@ function option_db($db_group = OPTIONS_DEFAULT_DBGROUP) {
     $instances = array();
   }
   
+  if ($db_group == '' && !empty($_ENV['CI_ENV'])) {
+    include(APPPATH.'config/database'.EXT);
+    if (isset($db) && isset($db[$_ENV['CI_ENV']])) {
+      $db_group = $_ENV['CI_ENV'];
+    }
+  }
+  
   if (!isset($instances[$db_group])) {
     log_message('info', "Creating Database Driver Class for options in [$db_group]");
-    $instances[$db_group] = DB($db_group);
+    $loader = load_class('Loader');
+    $instances[$db_group] = $loader->database($db_group, true, true);
   }
   
   return $instances[$db_group];
@@ -190,15 +198,16 @@ function option_db($db_group = OPTIONS_DEFAULT_DBGROUP) {
  * @param string $db_group (optional) defaults to 'default'
  */ 
 function delete_all_options($db_group = OPTIONS_DEFAULT_DBGROUP) {
-  $db = DB($db_group);
+  $db = option_db($db_group);
   Stash::delete('__options__');
   $db->empty_table('options');
 }
 
 function options_autoload($db_group = OPTIONS_DEFAULT_DBGROUP) {
-  $db = DB($db_group);
+  $db = option_db($db_group);
   $all = $db->get_where('options', array('autoload' => true));
   foreach($all->result() as $opt) {
+    log_message('info', "Auto-loaded option [$opt->option_name]");
     $value = maybe_unserialize($opt->option_value);
     Stash::update('__options__', $opt->option_name, $value);
   }
