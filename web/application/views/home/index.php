@@ -62,9 +62,7 @@
      <?php 
      $req = $this->facebook->api('/me/friends',array('limit' => 5,'offset' => 15)); 
      ?>
-      <pre>
-      <?php //print_r($req['data']); ?>
-      </pre>
+      
       <!-- List pictures of friends -->
       <?php foreach($req['data'] as $friend): ?>
         <div class='fbFriends'>
@@ -79,7 +77,7 @@
                          //echo $wall;
             }
           } ?>
-          <h1>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</h1>
+          <h1>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</h1>
           <?php if($wall): ?>
           <img src="https://graph.facebook.com/<?php echo $friend['id']; ?>/picture" /><a id=<?=$wall; ?> href="" class="getAlbum" ><h2><?php echo $friend['name']; $wall = "";  ?></h2></a>
           <?php else: ?>
