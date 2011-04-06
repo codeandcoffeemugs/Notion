@@ -38,24 +38,24 @@
 | the active record class
 */
 
-$active_group = "default";
+$active_group = "dev";
 $active_record = TRUE;
 
-$db['default']['hostname'] = "localhost";
-$db['default']['username'] = "local";
-$db['default']['password'] = "password";
-$db['default']['database'] = "idea";
-$db['default']['dbdriver'] = "mysqli";
-$db['default']['dbprefix'] = "my_";
-$db['default']['pconnect'] = TRUE;
-$db['default']['db_debug'] = TRUE;
-$db['default']['cache_on'] = FALSE;
-$db['default']['cachedir'] = '';
-$db['default']['char_set'] = 'utf8';
-$db['default']['dbcollat'] = 'utf8_general_ci';
-$db['default']['swap_pre'] = '';
-$db['default']['autoinit'] = TRUE;
-$db['default']['stricton'] = FALSE;
+$db['dev']['hostname'] = "localhost";
+$db['dev']['username'] = "root";
+$db['dev']['password'] = "root";
+$db['dev']['database'] = "slimui";
+$db['dev']['dbdriver'] = "mysqli";
+$db['dev']['dbprefix'] = "my_";
+$db['dev']['pconnect'] = TRUE;
+$db['dev']['db_debug'] = TRUE;
+$db['dev']['cache_on'] = FALSE;
+$db['dev']['cachedir'] = '';
+$db['dev']['char_set'] = 'utf8';
+$db['dev']['dbcollat'] = 'utf8_general_ci';
+$db['dev']['swap_pre'] = '';
+$db['dev']['autoinit'] = TRUE;
+$db['dev']['stricton'] = FALSE;
 
 
 /* End of file database.php */

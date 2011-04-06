@@ -15,4 +15,3 @@ $config['facebook']['default'] = array(
   'domain' => null,
   'fileUpload' => false
 );
->>>>>>> master

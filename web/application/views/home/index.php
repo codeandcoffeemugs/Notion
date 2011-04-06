@@ -1,98 +1,27 @@
-<!doctype html>  
-
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
-<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
-<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-
-  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
-       Remove this if you use the .htaccess -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-  <title></title>
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <!--  Mobile viewport optimized: j.mp/bplateviewport -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Place favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-
-  <!-- CSS : implied media="all" -->
-  <link rel="stylesheet" href="css/style.css?v=2">
-
-  <!-- Uncomment if you are specifically targeting less enabled mobile browsers
-  <link rel="stylesheet" media="handheld" href="css/handheld.css?v=2">  -->
- 
-  <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
-  <script src="js/libs/modernizr-1.6.min.js"></script>
-  <?php
-  
-  ?>
-
-</head>
-
-<body>
-
-  <div id="container">
-    <header>
-      
-        <h1>Slim UI</h1>
-        <div id="fb-root"></div>
-        
-        <?php
-       if($login) {
-         echo $login;
-       } else {
-         echo $logout;
-       }
-         ?>
-         <h2>Greetings <?php echo $me['name'];  ?> <img src="https://graph.facebook.com/<?php echo $uid; ?>/picture" /></h2>
-    </header>
-    
+<?php $this->load->view('home/header') ?>
+    <?php echo $accessToken; ?>
     <div id="main">
-     
-     <?php 
-     $req = $this->facebook->api('/me/friends',array('limit' => 5,'offset' => 15)); 
-     ?>
-      
-      <!-- List pictures of friends -->
-      <?php foreach($req['data'] as $friend): ?>
-        <div class='fbFriends'>
-          <?php 
-          $albums = $this->facebook->api($friend['id']. "/albums", array('access_token' => $accessToken)); // grabbing all albums
-          ?>
-          
-          <?php foreach($albums['data'] as $al) {
-                      //$wall = false;
-                       if($al['name'] == 'Profile Pictures') {
-                         $wall = $al['id'];
-                         //echo $wall;
-            }
-          } ?>
-          <h1>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</h1>
-          <?php if($wall): ?>
-          <img src="https://graph.facebook.com/<?php echo $friend['id']; ?>/picture" /><a id=<?=$wall; ?> href="" class="getAlbum" ><h2><?php echo $friend['name']; $wall = "";  ?></h2></a>
-          <?php else: ?>
-            <img src="https://graph.facebook.com/<?php echo $friend['id']; ?>/picture" /><h2><?php echo $friend['name']; ?></h2>
-          <?php endif; ?>
-        </div>
+       <div id="everyPicture">
+        
+       </div>
+        <!-- List pictures of friends -->
+        <div id="friendList">
+        <?php foreach($peeps as $f): ?>
+          <div class='fbFriends'>
+            <a id="<?php echo $f['id']; ?>" href="<?php echo site_url("home/getAlbums/{$f['id']}"); ?>" class="getAlbum" ><img src="https://graph.facebook.com/<?php echo $f['id']; ?>/picture" /><h2><?php echo $f['name']; ?></h2></a>
+          </div>
       <?php endforeach; ?>
-      <hr />
-      <div id="picsGoHere"></div>
-     
+        </div>
       </div>
     </div>
     
+   <!--     <script src="/js/lazy.js"></script>
+       <script>
+         var instructions = <?php echo json_encode($album_ids) ?>;
+       </script>
+        -->
     <footer>
-
+      
     </footer>
   </div> <!--! end of #container -->
 
@@ -109,6 +38,7 @@
   <script src="js/script.js"></script>
   <!-- end concatenated and minified scripts-->
   
+  <script src="/js/slim.js"></script>
   
   <!--[if lt IE 7 ]>
     <script src="js/libs/dd_belatedpng.js"></script>
@@ -119,7 +49,13 @@
   <script src="js/profiling/yahoo-profiling.min.js"></script>
   <script src="js/profiling/config.js"></script>
   <!-- end profiling code -->
-
+  
+  <!-- My login js script -->
+  <script>
+  var appId = '<?php echo $this->facebook->getAppId() ?>';
+  </script>
+  <script src="js/libs/fb.js"></script>
+  <!-- end my login js script -->
 
   <!-- asynchronous google analytics: mathiasbynens.be/notes/async-analytics-snippet 
        change the UA-XXXXX-X to be your site's ID -->
@@ -134,27 +70,61 @@
    //    })(document, 'script');
   </script>
   
-       <script src="http://connect.facebook.net/en_US/all.js"></script>
-      //      <script>
-      //        FB.init({appId: '<?=$appId; ?>', status: true,
-      //                 cookie: true, xfbml: true});
-      //        FB.Event.subscribe('auth.login', function(response) {
-      //          window.location.reload();
-      //        });
-           </script>
       <script type="text/javascript" charset="utf-8">
-        $('a').click(function(){
-          var albumId = $(this).attr('id');
-          var accessToken = '<?php echo $accessToken; ?>';
-          var url = 'https://graph.facebook.com/' +albumId+ '/photos?access_token=' +accessToken+ '&callback=?';
-          $.getJSON(url, function(data){
-                    var imgSrc = data.data[0].source;
-                    alert(imgSrc);           
-                              });
-          //alert(url);
-          return false;
-        });
+        // $('a').live('click',function(){
+        //           $('.pics').remove();
+        //           var albumId = $(this).attr('id');
+        //           var accessToken = '<?php echo $accessToken; ?>';
+        //           var url = 'https://graph.facebook.com/' +albumId+ '/photos?access_token=' +accessToken+ '&callback=?';
+        //           $.getJSON(url, function(data){
+        //                     var imgSrc = data.data[0].source;
+        //                     $('#picsGoHere').append("<img class='pics' src='" +imgSrc+ "' />")
+        //                     //alert(imgSrc);           
+        //                               });
+        //           //alert(url);
+        //           return false;
+        //         });
       </script>
- 
+      <script>
+        if (!window.console) { window.console = { log: function() {}, error: function() {} }};
+      
+        window.fbAsyncInit = function() {
+          FB.init({appId: '<?php echo $appId; ?>', status: true, cookie: true, xfbml: true});
+          FB.getLoginStatus(function(response){
+            if (!response.session) {
+              $('.login').show();
+              $('.logout').hide();
+              login();
+            } else {
+              $('.login').hide();
+              $('.logout').show();
+            }
+          });
+        };
+        
+        window.login = function() {
+          FB.login(function(response){
+            if (response.session) {
+              $('.login').hide();
+              $('.logout').show();
+            } else {
+              $('.login').show();
+              $('.logout').hide();
+            }
+          }, {perms: 'user_about_me, user_photos, friends_about_me, friends_photos, offline_access, read_stream'});
+        };
+
+        window.logout = function() {
+          FB.logout();
+          $('.login').show();
+          $('.logout').hide();
+          header('location: http://slimui.localhost');
+        };
+        (function() {
+          var e = document.createElement('script'); e.async = true;
+          e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+          document.getElementById('fb-root').appendChild(e);
+        }(jQuery));
+      </script>
 </body>
 </html>

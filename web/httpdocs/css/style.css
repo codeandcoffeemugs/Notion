@@ -221,10 +221,27 @@ button {  width: auto; overflow: visible; }
 
 
  /* Primary Styles
-    Author: 
+    Author: John Mangino 
  */
-
-
+#main {width:900px;margin:0px auto;}
+#friendList {width:200px;position:absolute;right:5px;}
+.fbFriends {
+  width:120px;
+  float:left;
+  text-align:center;
+  padding:15px 0px;
+  margin:0px;
+  border:1px solid #bbb;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  margin-bottom:10px;
+  box-shadow:inset 0px 2px 4px rgba(0,0,0,0.4);
+  -webkit-box-shadow:inset 0px 2px 4px rgba(0,0,0,0.4);
+  -moz-box-shadow:inset 0px 2px 4px rgba(0,0,0,0.4);
+  background-color:rgba(250,250,250,0.5);
+  }
+  #everyPicture {width:600px;}
 
 
 

@@ -12,7 +12,7 @@
 | -------------------------------------------------------------------
 */
 // enable option autoloading - speeds access to commonly needed options, but use only if acceptable in all cases
-@define('OPTIONS_ENABLE_AUTOLOADING', true);
+@define('OPTIONS_ENABLE_AUTOLOADING', false);
 // override default db_group (ignore environment); set to null for standard behavior
 @define('OPTIONS_DEFAULT_DBGROUP', null);
 
